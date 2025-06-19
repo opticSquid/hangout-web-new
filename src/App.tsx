@@ -1,13 +1,17 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router";
 import HomePage from "./pages/home";
+import { DataInitalizer } from "./lib/hooks/data-intializer";
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <DataInitalizer />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
