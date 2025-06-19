@@ -3,7 +3,7 @@ import type {
   DeviceInfo,
   OS,
   ScreenDimensions,
-} from "../types/device-identifier-type";
+} from "../types/device-identifier";
 import { useSessionContext } from "./session-provider";
 import { useNavigate } from "react-router";
 
