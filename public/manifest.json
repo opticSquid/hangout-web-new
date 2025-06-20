@@ -1,0 +1,45 @@
+{
+    "short_name": "HangOut",
+    "name": "HangOut",
+    "description": "Hangout PWA",
+    "start_url": ".",
+    "display_override": [
+        "fullscreen",
+        "minimal-ui"
+    ],
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "orientation": "portrait",
+    "theme_color": "#000000",
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshots/wide_screenshot.png",
+            "sizes": "1440x891",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshots/tablet_screenshot.png",
+            "sizes": "768x891",
+            "type": "image/png",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "/screenshots/mobile_screenshot.png",
+            "sizes": "425x891",
+            "type": "image/png"
+        }
+    ]
+}

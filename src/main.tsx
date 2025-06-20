@@ -6,6 +6,15 @@ import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    {/* Make the app full screen on iOS Safari */}
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-status-bar-style" content="default" />
+    <meta name="mobile-web-app-title" content="HangOut" />
+    {/* Theme color for Android Chrome */}
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="touch-icon" href="/icons/icon-192x192.png" />
+
     <App />
   </StrictMode>
 );
