@@ -5,7 +5,7 @@ import BottomBar from "./components/Bottom Bar";
 import { ThemeProvider } from "./lib/hooks/theme-provider";
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark">
+    <ThemeProvider>
       <div className="h-screen w-screen">
         <main className="h-11/12">
           <BrowserRouter>
