@@ -1,9 +1,8 @@
 import { useCallback, useRef } from "react";
 import type { ApiResponse } from "../types/ApiResponse";
-import type { FetchPostsRq } from "../types/posts";
+import type { FetchPostsRq, PagePointer } from "../types/posts";
 import type { FetchPostsRs } from "../types/posts";
-import type { PagePointer } from "../types/page-pointer";
-import type { SearchRadius } from "../types/search-radius";
+import type { SearchRadius } from "../types/location";
 
 export default function useFeedUtils() {
   const searchRadius = useRef<SearchRadius>({ min: 0, max: 1000 });

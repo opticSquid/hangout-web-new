@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import useFeedUtils from "../lib/hooks/feed-utils";
-import type { NearbyPosttype } from "../lib/types/nearby-post-type";
+import type { Post } from "../lib/types/posts";
 
 function HomePage() {
   const { fetchPosts } = useFeedUtils();
@@ -8,7 +8,7 @@ function HomePage() {
     null
   );
   const [loadingData, setLoadingData] = useState<boolean>(true);
-  const [postList, setPostList] = useState<NearbyPosttype[]>([]);
+  const [postList, setPostList] = useState<Post[]>([]);
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
   // Fetches user's location
   useEffect(() => {
@@ -111,25 +111,11 @@ function HomePage() {
   }, [postToTriggerDataLoad]);
 
   return (
-    <div className="snap-mandatory snap-y">
-      {postList.length > 0 ? (
-        postList.map((post) => (
-          <div
-            key={post.postId}
-            post-id={post.postId}
-            className="space-y-2 post-container snap-always snap-start"
-          >
-            <Post
-              post={post}
-              canPlayVideo={post.postId === visiblePostId}
-              showDistance={true}
-            />
-          </div>
-        ))
-      ) : (
-        <EmptyFeed />
-      )}
-    </div>
+    <section className="h-full overflow-y-auto scroll-smooth snap-y snap-mandatory">
+      <div className="snap-start snap-always h-full bg-yellow-300" />
+      <div className="snap-start snap-always h-full bg-red-300" />
+      <div className="snap-start snap-always h-full bg-blue-300" />
+    </section>
   );
 }
 export default HomePage;
