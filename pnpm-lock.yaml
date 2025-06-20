@@ -56,6 +56,9 @@ importers:
       react-router:
         specifier: ^7.6.2
         version: 7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      shaka-player:
+        specifier: ^4.15.3
+        version: 4.15.3
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -1190,6 +1193,9 @@ packages:
   electron-to-chromium@1.5.169:
     resolution: {integrity: sha512-q7SQx6mkLy0GTJK9K9OiWeaBMV4XQtBSdf6MJUzDB/H/5tFXfIiX38Lci1Kl6SsgiEhz1SQI1ejEOU5asWEhwQ==}
 
+  eme-encryption-scheme-polyfill@2.2.3:
+    resolution: {integrity: sha512-N0nlJZVaBqGWzvvFb6ZAxvTVeZ4v9cXCzrSFE0zCbNbviiygWI0gDJiRc4o5SqFrPVYBSQr5z5SzKjIvvxL+Vw==}
+
   enhanced-resolve@5.18.1:
     resolution: {integrity: sha512-ZSW3ma5GkcQBIpwZTSRAI8N71Uuwgs93IezB7mf7R60tC8ZbJideoDNKjHn2O9KIlx6rkGTTEk1xUCK2E1Y2Yg==}
     engines: {node: '>=10.13.0'}
@@ -1677,6 +1683,10 @@ packages:
 
   set-cookie-parser@2.7.1:
     resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
+
+  shaka-player@4.15.3:
+    resolution: {integrity: sha512-WGaLcbtOHvSsq8vOIM6Vmh7b3p9VGbz7bABjaNU7WM3OCK0ONPVsBH+wYJjS2ltMG94Qz3/HYt15NvJZiwrgyA==}
+    engines: {node: '>=18'}
 
   shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
@@ -2835,6 +2845,8 @@ snapshots:
 
   electron-to-chromium@1.5.169: {}
 
+  eme-encryption-scheme-polyfill@2.2.3: {}
+
   enhanced-resolve@5.18.1:
     dependencies:
       graceful-fs: 4.2.11
@@ -3292,6 +3304,10 @@ snapshots:
   semver@7.7.2: {}
 
   set-cookie-parser@2.7.1: {}
+
+  shaka-player@4.15.3:
+    dependencies:
+      eme-encryption-scheme-polyfill: 2.2.3
 
   shebang-command@2.0.0:
     dependencies:
