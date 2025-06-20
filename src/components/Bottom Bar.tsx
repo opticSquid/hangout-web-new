@@ -1,9 +1,12 @@
-import ThemeToggle from "./theme-toggle";
+import { HouseIcon } from "lucide-react";
+import { Button } from "./ui/button";
 
 function BottomBar() {
   return (
-    <div className="bg-backgroud border border-black">
-      <ThemeToggle />
+    <div className="border border-black flex">
+      <Button variant="secondary" size="icon" className="size-8">
+        <HouseIcon />
+      </Button>
     </div>
   );
 }
