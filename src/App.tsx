@@ -7,14 +7,14 @@ function App() {
   return (
     <ThemeProvider>
       <div className="h-screen w-screen">
-        <main className="h-11/12">
+        <main className="h-16/17">
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<HomePage />} />
             </Routes>
           </BrowserRouter>
         </main>
-        <footer>
+        <footer className="fixed bottom-0">
           <BottomBarComponent />
         </footer>
       </div>

@@ -2,6 +2,7 @@ import type { ShakaError } from "@/lib/types/media";
 import type { VideoPlayerProps } from "@/lib/types/props/video-player-props";
 import { useEffect, useRef, useState, type ReactElement } from "react";
 import "shaka-player/dist/controls.css";
+// @ts-ignore
 import shaka from "shaka-player/dist/shaka-player.ui.js";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import PostInteractionsComponent from "./post-interactions";

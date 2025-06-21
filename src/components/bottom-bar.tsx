@@ -9,7 +9,7 @@ import {
 
 function BottomBarComponent(): ReactElement {
   return (
-    <div className="flex flex-row justify-between items-center p-1">
+    <div className="z-20 w-screen flex flex-row justify-between items-center px-1 bg-background">
       <Tooltip>
         <TooltipTrigger asChild>
           <Button variant="ghost" size="icon" className="size-12">
