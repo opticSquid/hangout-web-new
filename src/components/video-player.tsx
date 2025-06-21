@@ -3,18 +3,20 @@ import type { VideoPlayerProps } from "@/lib/types/props/video-player-props";
 import { useEffect, useRef, useState, type ReactElement } from "react";
 import "shaka-player/dist/controls.css";
 import shaka from "shaka-player/dist/shaka-player.ui.js";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import PostInteractionsComponent from "./post-interactions";
 
 function VideoPlayer(props: VideoPlayerProps): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoNotAvailable, setVideoNotAvailable] = useState<boolean>(false);
-
   useEffect(() => {
     const extractedFilename = props.filename.replace(/\.[^.]+$/, "");
 
     if (!videoRef.current || !containerRef.current) return;
 
     const player = new shaka.Player();
+
     const ui = new shaka.ui.Overlay(
       player,
       containerRef.current,
@@ -45,7 +47,19 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
     };
   }, [props.filename]);
 
-  return (
+  return videoNotAvailable ? (
+    <Card>
+      <CardHeader>
+        <CardTitle>Content Not Available</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div>
+          Content may be under processing or is not available at this time.
+          Please try again later
+        </div>
+      </CardContent>
+    </Card>
+  ) : (
     <div data-shaka-player-container ref={containerRef} className="h-full">
       <video
         data-shaka-player
@@ -54,6 +68,12 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
         autoPlay={props.autoPlay}
         loop
         className="aspect-9/16 object-cover"
+      />
+      <PostInteractionsComponent
+        heartCount={props.postInteractions.hearts}
+        commentCount={props.postInteractions.comments}
+        distance={props.postInteractions.distance}
+        location={props.postInteractions.location}
       />
     </div>
   );

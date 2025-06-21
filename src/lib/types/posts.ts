@@ -13,21 +13,26 @@ export type FetchPostsRq = {
   pageNumber: number;
 };
 
-export type Post = {
+type PostContent = {
   postId: string;
   ownerId: number;
   filename: string;
   contentType: string;
   postDescription?: string;
-  hearts: number;
-  comments: number;
-  interactions: number;
   createdAt: string;
   state: string;
   city: string;
+};
+
+export type PostInteractions = {
+  hearts: number;
+  comments: number;
+  interactions: number;
   location: Location;
   distance: number;
 };
+
+export type Post = PostContent & PostInteractions;
 
 export type FetchPostsRs = {
   posts: Post[];
@@ -42,13 +47,6 @@ export type PostOwner = {
   city: string;
   distance: number;
   location: Location;
-};
-
-export type PostInteraction = {
-  postId: string;
-  heartCount: number;
-  commentCount: number;
-  interactionCount: number;
 };
 
 export type PostControls = {

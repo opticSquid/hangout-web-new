@@ -1,6 +1,8 @@
+import type { PostInteractions } from "../posts";
+
 export interface VideoPlayerProps {
-  posId: string;
   hostURL: string;
   filename: string;
   autoPlay: boolean;
+  postInteractions: PostInteractions;
 }

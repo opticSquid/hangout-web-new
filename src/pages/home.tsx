@@ -111,7 +111,7 @@ function HomePage() {
     return () => postElements.forEach((el) => observer.unobserve(el));
   }, [postToTriggerDataLoad]);
 
-  const dummyPost: Post = {
+  const dummyPost1: Post = {
     postId: "a",
     ownerId: 0,
     filename:
@@ -136,11 +136,36 @@ function HomePage() {
     },
     distance: 124,
   };
+  const dummyPost2: Post = {
+    postId: "a",
+    ownerId: 0,
+    filename:
+      "531530e17baa69d03de1d4b4135e76a2a0eab9a85d76c851b3616a791a6463b3498023aad9144d0236ee941befb09b1c87b17e2091912cd407a88332846f3f8e.mpd",
+    contentType: "video/mp4",
+    postDescription: "description",
+    hearts: 29,
+    comments: 52,
+    interactions: 0,
+    createdAt: "2025-06-21T14:45:30.123Z",
+    state: "West Bengal",
+    city: "Kolkata",
+    location: {
+      type: "Point",
+      crs: {
+        type: "name",
+        properties: {
+          name: "EPSG:4326",
+        },
+      },
+      coordinates: [0, 0],
+    },
+    distance: 47,
+  };
   return (
     <section className="h-full overflow-y-auto scroll-smooth snap-y snap-mandatory">
-      <PostComponent {...dummyPost} />
-      <PostComponent {...dummyPost} />
-      <PostComponent {...dummyPost} />
+      <PostComponent {...dummyPost1} />
+      <PostComponent {...dummyPost2} />
+      <PostComponent {...dummyPost1} />
     </section>
   );
 }

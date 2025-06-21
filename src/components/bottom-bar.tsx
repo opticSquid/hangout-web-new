@@ -1,7 +1,8 @@
 import { BadgePlusIcon, HouseIcon, UserIcon } from "lucide-react";
 import { Button } from "./ui/button";
+import type { ReactElement } from "react";
 
-function BottomBar() {
+function BottomBarComponent(): ReactElement {
   return (
     <div className="flex flex-row justify-between items-center">
       <Button variant="ghost" size="icon" className="size-12">
@@ -16,4 +17,4 @@ function BottomBar() {
     </div>
   );
 }
-export default BottomBar;
+export default BottomBarComponent;

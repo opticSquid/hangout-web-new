@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router";
 import HomePage from "./pages/home";
-import BottomBar from "./components/bottom-bar";
+import BottomBarComponent from "./components/bottom-bar";
 import { ThemeProvider } from "./lib/hooks/theme-provider";
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           </BrowserRouter>
         </main>
         <footer>
-          <BottomBar />
+          <BottomBarComponent />
         </footer>
       </div>
     </ThemeProvider>
