@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import useFeedUtils from "../lib/hooks/feed-utils";
 import type { Post } from "../lib/types/posts";
+import PostComponent from "@/components/post";
 
 function HomePage() {
   const { fetchPosts } = useFeedUtils();
@@ -110,11 +111,36 @@ function HomePage() {
     return () => postElements.forEach((el) => observer.unobserve(el));
   }, [postToTriggerDataLoad]);
 
+  const dummyPost: Post = {
+    postId: "a",
+    ownerId: 0,
+    filename:
+      "531530e17baa69d03de1d4b4135e76a2a0eab9a85d76c851b3616a791a6463b3498023aad9144d0236ee941befb09b1c87b17e2091912cd407a88332846f3f8e.mpd",
+    contentType: "video/mp4",
+    postDescription: "description",
+    hearts: 0,
+    comments: 0,
+    interactions: 0,
+    createdAt: "2025-06-21T14:45:30.123Z",
+    state: "West Bengal",
+    city: "Kolkata",
+    location: {
+      type: "Point",
+      crs: {
+        type: "name",
+        properties: {
+          name: "EPSG:4326",
+        },
+      },
+      coordinates: [0, 0],
+    },
+    distance: 124,
+  };
   return (
     <section className="h-full overflow-y-auto scroll-smooth snap-y snap-mandatory">
-      <div className="snap-start snap-always h-full bg-yellow-300" />
-      <div className="snap-start snap-always h-full bg-red-300" />
-      <div className="snap-start snap-always h-full bg-blue-300" />
+      <PostComponent {...dummyPost} />
+      <PostComponent {...dummyPost} />
+      <PostComponent {...dummyPost} />
     </section>
   );
 }

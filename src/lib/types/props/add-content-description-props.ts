@@ -1,8 +1,8 @@
-import type { AcceptedMediaType } from "./media";
+import type { AcceptedMediaType } from "../media";
 
-export type AddContentDescriptionProps = {
+export interface AddContentDescriptionProps {
   blob: Blob;
   mediaType: AcceptedMediaType;
   onRetake: () => void;
   onAddDescription: (description: string) => void;
-};
+}

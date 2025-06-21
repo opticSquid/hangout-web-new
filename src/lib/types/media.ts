@@ -22,8 +22,3 @@ export type ShakaError = {
   data: object[];
   handled: boolean;
 };
-
-export type VideoPlayerProps = {
-  filename: string;
-  autoPlay: boolean;
-};
