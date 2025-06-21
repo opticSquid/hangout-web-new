@@ -7,16 +7,16 @@ function App() {
   return (
     <ThemeProvider>
       <div className="h-screen w-screen">
-        <main className="h-16/17">
-          <BrowserRouter>
+        <BrowserRouter>
+          <main className="h-16/17">
             <Routes>
               <Route path="/" element={<HomePage />} />
             </Routes>
-          </BrowserRouter>
-        </main>
-        <footer className="fixed bottom-0">
-          <BottomBarComponent />
-        </footer>
+          </main>
+          <footer className="fixed bottom-0">
+            <BottomBarComponent />
+          </footer>
+        </BrowserRouter>
       </div>
     </ThemeProvider>
   );
