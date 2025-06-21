@@ -23,11 +23,6 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
     player.attach(videoRef.current);
     ui.configure({
       controlPanelElements: ["fullscreen"],
-      seekBarColors: {
-        base: "rgba(255, 255, 255, 0.3)",
-        buffered: "rgba(255, 255, 255, 0.54)",
-        played: "rgb(255, 255, 255)",
-      },
     });
     const onError = (error: ShakaError) => {
       if (error.code === 7002) {
