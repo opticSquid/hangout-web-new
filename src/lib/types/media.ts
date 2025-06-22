@@ -11,10 +11,6 @@ export type AcceptedMediaType =
   | "video/mov"
   | null;
 
-export type ShootMediaProps = {
-  onMediaCaptured: (mediaBlob: Blob) => void;
-};
-
 export type ShakaError = {
   code: number;
   severity: string;

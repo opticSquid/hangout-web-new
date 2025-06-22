@@ -23,7 +23,11 @@ function PostInteractionsComponent(props: PostInteractionProps) {
       <div className="flex flex-col items-center gap-y-2">
         <Button variant="ghost" size="icon" onClick={toggleIsHearted}>
           {hearted.isHearted ? (
-            <HeartIcon className="size-10 bg-primary rounded-full p-1" />
+            <HeartIcon
+              fill="oklch(0.705 0.213 47.604)"
+              stroke="oklch(0.705 0.213 47.604)"
+              className="size-10"
+            />
           ) : (
             <HeartIcon className="size-10" />
           )}

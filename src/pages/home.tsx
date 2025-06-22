@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactElement } from "react";
 import useFeedUtils from "../lib/hooks/feed-utils";
 import type { Post } from "../lib/types/posts";
 import PostComponent from "@/components/post";
 
-function HomePage() {
+function HomePage(): ReactElement {
   const { fetchPosts } = useFeedUtils();
   const [userLocation, setUserLocation] = useState<GeolocationPosition | null>(
     null
