@@ -92,7 +92,7 @@ function MapComponent(props: AddLocationProps) {
       <MapContainer center={position} zoom={17} className="h-11/13">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <RecenterMap position={position} />
         <LocationMarker />

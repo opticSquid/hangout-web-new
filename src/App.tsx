@@ -4,6 +4,7 @@ import HomePage from "./pages/home";
 import BottomBarComponent from "./components/bottom-bar";
 import { ThemeProvider } from "./lib/hooks/theme-provider";
 import CreatePage from "./pages/create";
+import ProfilePage from "./pages/profile";
 function App() {
   return (
     <ThemeProvider>
@@ -13,6 +14,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/create" element={<CreatePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Routes>
           </main>
           <footer className="fixed bottom-0">
