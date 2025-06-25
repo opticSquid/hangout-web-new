@@ -1,6 +1,7 @@
-import LogoutComponent from "@/components/logout-button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import PostComponent from "@/components/post";
+import ProfileHeaderComponent from "@/components/profile-header";
 import { Button } from "@/components/ui/button";
+import type { Post } from "@/lib/types/posts";
 import type { Profile } from "@/lib/types/profile";
 import { Grid3X3Icon } from "lucide-react";
 import type { ReactElement } from "react";
@@ -27,42 +28,73 @@ function ProfilePage(): ReactElement {
   const baseUrl = `http://localhost:9000/processed/${extractedFilename(
     profileData.profilePicture.filename
   )}`;
-  const getInitials = (fullName: string) => {
-    const nameParts = fullName.split(" ");
-    return nameParts[0][0] + nameParts[1][0];
+  const dummyPost1: Post = {
+    postId: "a",
+    ownerId: 0,
+    filename:
+      "531530e17baa69d03de1d4b4135e76a2a0eab9a85d76c851b3616a791a6463b3498023aad9144d0236ee941befb09b1c87b17e2091912cd407a88332846f3f8e.mpd",
+    contentType: "video/mp4",
+    postDescription: "description",
+    hearts: 0,
+    comments: 0,
+    interactions: 0,
+    createdAt: "2025-06-21T14:45:30.123Z",
+    state: "West Bengal",
+    city: "Kolkata",
+    location: {
+      type: "Point",
+      crs: {
+        type: "name",
+        properties: {
+          name: "EPSG:4326",
+        },
+      },
+      coordinates: [0, 0],
+    },
+    distance: 124,
+  };
+  const dummyPost2: Post = {
+    postId: "a",
+    ownerId: 0,
+    filename:
+      "531530e17baa69d03de1d4b4135e76a2a0eab9a85d76c851b3616a791a6463b3498023aad9144d0236ee941befb09b1c87b17e2091912cd407a88332846f3f8e.mpd",
+    contentType: "video/mp4",
+    postDescription: "description",
+    hearts: 29,
+    comments: 52,
+    interactions: 0,
+    createdAt: "2025-06-21T14:45:30.123Z",
+    state: "West Bengal",
+    city: "Kolkata",
+    location: {
+      type: "Point",
+      crs: {
+        type: "name",
+        properties: {
+          name: "EPSG:4326",
+        },
+      },
+      coordinates: [0, 0],
+    },
+    distance: 47,
   };
   return (
-    <div className="fixed top-0 w-full">
-      <div className="flex flex-row items-center justify-start m-4 gap-x-4">
-        <Avatar className="size-32">
-          <AvatarImage
-            src={`${baseUrl}/${profileData.profilePicture.filename}`}
-            srcSet={`
-                    ${baseUrl}/${profileData.profilePicture.filename}_144.avif 144w,
-                    ${baseUrl}/${profileData.profilePicture.filename}_360.avif 360w,
-                    ${baseUrl}/${profileData.profilePicture.filename}_720.avif 720w,
-                    ${baseUrl}/${profileData.profilePicture.filename} 1080w
-                `}
-            className="object-cover"
-          />
-          <AvatarFallback delayMs={500}>
-            {getInitials(profileData.name)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col gap-y-2">
-          <div className="grow text-lg font-medium tracking-wide">
-            {profileData.name}
-          </div>
-          <LogoutComponent />
-        </div>
-      </div>
+    <div className="flex flex-col h-full">
+      <ProfileHeaderComponent
+        profilePictureBaseUrl={`${baseUrl}/${profileData.profilePicture.filename}`}
+        name={profileData.name}
+      />
       <div className="flex flex-row border-t border-b justify-center">
         <Button variant="ghost" size="icon">
           <Grid3X3Icon />
           &nbsp;POSTS
         </Button>
       </div>
-      {/* <PostGrid /> */}
+      <section className="overflow-y-auto scroll-smooth snap-y snap-mandatory">
+        <PostComponent {...dummyPost1} />
+        <PostComponent {...dummyPost2} />
+        <PostComponent {...dummyPost1} />
+      </section>
     </div>
   );
 }

@@ -68,7 +68,7 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
         ref={videoRef}
         autoPlay={props.autoPlay}
         loop
-        className="aspect-9/16 object-cover"
+        className="aspect-9/16 object-cover w-full"
       />
       <PostInteractionsComponent
         heartCount={props.postInteractions.hearts}

@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router";
 import { Button } from "./ui/button";
 import "./stylesheets/map.css";
-function MapComponent(props: AddLocationProps) {
+function SetLocationOnMap(props: AddLocationProps) {
   const navigate = useNavigate();
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
     lat: 0,
@@ -129,4 +129,4 @@ function MapComponent(props: AddLocationProps) {
     </div>
   );
 }
-export default MapComponent;
+export default SetLocationOnMap;

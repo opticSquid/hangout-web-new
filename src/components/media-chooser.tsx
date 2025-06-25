@@ -170,7 +170,7 @@ function MediaChooserComponent(props: ShootMediaProps): ReactElement {
     <div className="h-full flex flex-col items-center">
       {isRecording && (
         <div className="absolute top-1 bg-black/50 rounded-xl px-2 py-1 z-10 font-light">
-          <div className="flex flex-row items-center space-x-1 animate-pulse">
+          <div className="flex flex-row items-center justify-between space-x-1 animate-pulse">
             <CircleIcon fill="red" size="12" />
             <span>{timer}</span>
           </div>
