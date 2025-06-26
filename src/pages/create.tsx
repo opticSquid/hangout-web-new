@@ -1,4 +1,4 @@
-import SetLocationOnMap from "@/components/set-location-on-map";
+import SetLocationOnMapComponent from "@/components/set-location-on-map";
 import MediaChooserComponent from "@/components/media-chooser";
 import ReviewContentComponent from "@/components/review-content";
 import type { AcceptedMediaType } from "@/lib/types/media";
@@ -100,7 +100,7 @@ function CreatePage(): ReactElement {
       }
     }
     case 2: {
-      return <SetLocationOnMap onSubmit={onSubmit} />;
+      return <SetLocationOnMapComponent onSubmit={onSubmit} />;
     }
     default: {
       return (

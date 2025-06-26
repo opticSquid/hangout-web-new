@@ -1,8 +1,8 @@
-import { HeartIcon, MessageCircleIcon, MapPinIcon } from "lucide-react";
-import { Button } from "./ui/button";
 import type { PostInteractionProps } from "@/lib/types/props/post-interactions-props";
+import { HeartIcon, MapPinIcon, MessageCircleIcon } from "lucide-react";
 import { useState } from "react";
-import ShowLocationComponent from "./show-location";
+import ShowLocationOnMapComponent from "./show-location-on-map";
+import { Button } from "./ui/button";
 
 function PostInteractionsComponent(props: PostInteractionProps) {
   const [hearted, setHearted] = useState<{
@@ -53,7 +53,7 @@ function PostInteractionsComponent(props: PostInteractionProps) {
         <div>{props.distance}&nbsp;km</div>
       </div>
       {isLocationShowed && (
-        <ShowLocationComponent
+        <ShowLocationOnMapComponent
           location={props.location}
           isOpen={isLocationShowed}
           setIsOpen={setIsLocationShowed}

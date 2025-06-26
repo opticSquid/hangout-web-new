@@ -1,20 +1,14 @@
+import type { Position } from "@/lib/types/location";
 import type { AddLocationProps } from "@/lib/types/props/add-location-props";
-import L from "leaflet";
 import { LocateFixedIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  MapContainer,
-  Marker,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from "react-leaflet";
 import { useNavigate } from "react-router";
-import { Button } from "./ui/button";
+import MapComponent from "./map";
 import "./stylesheets/map.css";
-function SetLocationOnMap(props: AddLocationProps) {
+import { Button } from "./ui/button";
+function SetLocationOnMapComponent(props: AddLocationProps) {
   const navigate = useNavigate();
-  const [position, setPosition] = useState<{ lat: number; lng: number }>({
+  const [position, setPosition] = useState<Position>({
     lat: 0,
     lng: 0,
   });
@@ -42,39 +36,6 @@ function SetLocationOnMap(props: AddLocationProps) {
     setLocateMe(false);
   }, [locateMe]);
 
-  // Component to recenter map when position changes
-  const RecenterMap = ({
-    position,
-  }: {
-    position: { lat: number; lng: number };
-  }) => {
-    const map = useMap();
-    useEffect(() => {
-      map.setView(position, map.getZoom());
-    }, [position, map]);
-    return null;
-  };
-
-  // Default marker icon fix for Leaflet in React
-  const defaultIcon = new L.Icon({
-    iconUrl: "/icons/marker-icon.png",
-    shadowUrl: "/icons/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-  });
-
-  //Location Marker
-  const LocationMarker = () => {
-    useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        setPosition({ lat, lng });
-      },
-    });
-
-    return position ? <Marker position={position} icon={defaultIcon} /> : null;
-  };
-
   // cancel post creation
   const doCancel = () => {
     navigate("/");
@@ -89,14 +50,13 @@ function SetLocationOnMap(props: AddLocationProps) {
   };
   return (
     <div className="h-full">
-      <MapContainer center={position} zoom={17} className="h-11/13">
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <RecenterMap position={position} />
-        <LocationMarker />
-      </MapContainer>
+      <MapComponent
+        position={position}
+        zoomLevel={17}
+        setPosition={setPosition}
+        isRecenterEnabled={true}
+        tailWindHeight="h-11/13"
+      />
       <div className="flex flex-col w-full gap-y-2 px-2 mt-2">
         <Button
           variant="secondary"
@@ -129,4 +89,4 @@ function SetLocationOnMap(props: AddLocationProps) {
     </div>
   );
 }
-export default SetLocationOnMap;
+export default SetLocationOnMapComponent;

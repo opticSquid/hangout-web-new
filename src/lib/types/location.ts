@@ -13,3 +13,8 @@ export type SearchRadius = {
   min: number;
   max: number;
 };
+
+export type Position = {
+  lat: number;
+  lng: number;
+};
