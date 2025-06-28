@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactElement } from "react";
 import useFeedUtils from "../lib/hooks/feed-utils";
 import type { Post } from "../lib/types/posts";
 import PostComponent from "@/components/post";
+import LoadingOverlay from "@/components/loading-overlay";
 
 function HomePage(): ReactElement {
   const { fetchPosts } = useFeedUtils();
@@ -162,11 +163,13 @@ function HomePage(): ReactElement {
     distance: 47,
   };
   return (
-    <section className="h-full overflow-y-auto scroll-smooth snap-y snap-mandatory">
-      <PostComponent {...dummyPost1} />
-      <PostComponent {...dummyPost2} />
-      <PostComponent {...dummyPost1} />
-    </section>
+    <>
+      <section className="h-full overflow-y-auto scroll-smooth snap-y snap-mandatory">
+        <PostComponent {...dummyPost1} />
+        <PostComponent {...dummyPost2} />
+        <PostComponent {...dummyPost1} />
+      </section>
+    </>
   );
 }
 export default HomePage;
