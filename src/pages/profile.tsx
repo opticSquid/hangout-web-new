@@ -49,7 +49,7 @@ function ProfilePage(): ReactElement {
           name: "EPSG:4326",
         },
       },
-      coordinates: [0, 0],
+      coordinates: [22.5674, 88.4739],
     },
     distance: 124,
   };
@@ -74,7 +74,7 @@ function ProfilePage(): ReactElement {
           name: "EPSG:4326",
         },
       },
-      coordinates: [0, 0],
+      coordinates: [22.5674, 88.4739],
     },
     distance: 47,
   };

@@ -55,7 +55,7 @@ function SetLocationOnMapComponent(props: AddLocationProps) {
         zoomLevel={17}
         setPosition={setPosition}
         isRecenterEnabled={true}
-        tailWindHeight="h-11/13"
+        className="h-11/13"
       />
       <div className="flex flex-col w-full gap-y-2 px-2 mt-2">
         <Button

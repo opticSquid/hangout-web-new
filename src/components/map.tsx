@@ -1,4 +1,5 @@
 import type { MapComponentProps } from "@/lib/types/props/map-component-props";
+import { cn } from "@/lib/utils";
 import L from "leaflet";
 import { useEffect, type ReactElement } from "react";
 import {
@@ -22,7 +23,6 @@ function MapComponent(props: MapComponentProps): ReactElement {
     }, [position, map]);
     return null;
   };
-
   // Default marker icon fix for Leaflet in React
   const defaultIcon = new L.Icon({
     iconUrl: "/icons/marker-icon.png",
@@ -30,6 +30,7 @@ function MapComponent(props: MapComponentProps): ReactElement {
     iconSize: [25, 41],
     iconAnchor: [12, 41],
   });
+
   //Location Marker
   const LocationMarker = () => {
     useMapEvents({
@@ -48,7 +49,9 @@ function MapComponent(props: MapComponentProps): ReactElement {
     <MapContainer
       center={props.position}
       zoom={props.zoomLevel}
-      className={props.tailWindHeight}
+      className={cn(props.className)}
+      doubleClickZoom={true}
+      bounceAtZoomLimits={true}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

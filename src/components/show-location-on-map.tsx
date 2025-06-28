@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -19,20 +20,26 @@ function ShowLocationOnMapComponent(
     lng: props.location.coordinates[1],
   };
   return (
-    <Dialog open={props.isOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog
+      open={props.isOpen}
+      onOpenChange={() => props.setIsOpen(!props.isOpen)}
+    >
+      <DialogContent className="w-4/5 h-3/4 gap-y-4 px-0 py-2">
         <DialogHeader>
-          <DialogTitle>Location</DialogTitle>
+          <DialogTitle className="px-2">Location</DialogTitle>
+          <DialogDescription className="hidden">
+            Location of the Place
+          </DialogDescription>
         </DialogHeader>
         <MapComponent
           position={position}
           zoomLevel={17}
           isRecenterEnabled={false}
-          tailWindHeight="h-6/13"
+          className="grow"
         />
-        <DialogFooter>
+        <DialogFooter className="px-2">
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
