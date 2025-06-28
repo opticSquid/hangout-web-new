@@ -59,7 +59,7 @@ function LoginFormComponent(): ReactElement {
     try {
       setIsLoading(true);
       // Simulate API call
-      await new Promise((res) => setTimeout(res, 1000));
+      await new Promise((res) => setTimeout(res, 5000));
       console.log("Logging in with", form);
       // Navigate or save token here
     } catch (err) {
@@ -115,7 +115,7 @@ function LoginFormComponent(): ReactElement {
         <CardFooter>
           Don&apos;t have an account?&nbsp;
           <Link
-            to="/signup"
+            to="/sign-up"
             className="text-primary underline-offset-4 hover:underline"
           >
             Signup
