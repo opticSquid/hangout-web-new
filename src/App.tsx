@@ -5,6 +5,7 @@ import BottomBarComponent from "./components/bottom-bar";
 import { ThemeProvider } from "./lib/hooks/theme-provider";
 import CreatePage from "./pages/create";
 import ProfilePage from "./pages/profile";
+import SigninPage from "./pages/signin";
 function App() {
   return (
     <ThemeProvider>
@@ -15,6 +16,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/create" element={<CreatePage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/sign-in" element={<SigninPage />} />
             </Routes>
           </main>
           <footer className="fixed bottom-0">
