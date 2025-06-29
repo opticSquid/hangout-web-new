@@ -6,6 +6,7 @@ import { ThemeProvider } from "./lib/hooks/theme-provider";
 import CreatePage from "./pages/create";
 import ProfilePage from "./pages/profile";
 import SigninPage from "./pages/signin";
+import SignUpPage from "./pages/signup";
 function App() {
   return (
     <ThemeProvider>
@@ -17,6 +18,7 @@ function App() {
               <Route path="/create" element={<CreatePage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/sign-in" element={<SigninPage />} />
+              <Route path="/sign-up" element={<SignUpPage />} />
             </Routes>
           </main>
           <footer className="fixed bottom-0">
