@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState, type ReactElement } from "react";
-import useFeedUtils from "../lib/hooks/feed-utils";
-import type { Post } from "../lib/types/posts";
 import PostComponent from "@/components/post";
-import LoadingOverlay from "@/components/loading-overlay";
+import { useEffect, useMemo, useState, type ReactElement } from "react";
+import useFeedUtils from "../lib/context/feed-utils";
+import type { Post } from "../lib/types/posts";
 
 function HomePage(): ReactElement {
   const { fetchPosts } = useFeedUtils();
