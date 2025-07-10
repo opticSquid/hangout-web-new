@@ -1,5 +1,5 @@
 import type { MapComponentProps } from "@/lib/types/props/map-component-props";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import L from "leaflet";
 import { useEffect, type ReactElement } from "react";
 import {

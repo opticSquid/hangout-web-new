@@ -1,5 +1,5 @@
 import type { LoadingOverlayProps } from "../lib/types/props/loading-overlay-props";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { Loader2Icon } from "lucide-react";
 import type { ReactElement } from "react";
 
