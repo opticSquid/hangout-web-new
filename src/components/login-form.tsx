@@ -18,7 +18,7 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import type { ApiResponse } from "@/lib/types/ApiResponse";
+import type { ApiResponse } from "@/lib/types/api-response";
 
 function LoginFormComponent(): ReactElement {
   const [form, setForm] = useState<LoginFormSchema>({

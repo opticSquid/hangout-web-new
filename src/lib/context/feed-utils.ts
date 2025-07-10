@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import type { ApiResponse } from "../types/ApiResponse";
+import type { ApiResponse } from "../types/api-response";
 import type { FetchPostsRq, PagePointer } from "../types/posts";
 import type { FetchPostsRs } from "../types/posts";
 import type { SearchRadius } from "../types/location";
