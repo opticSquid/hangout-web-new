@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { AccessTokenHandlers } from "../types/access-token";
+import type { CustomAxiosRequestConfig } from "../types/custom-axios-request";
 let getAccessToken: AccessTokenHandlers["getAccessToken"] = () => null;
 let setAccessToken: AccessTokenHandlers["setAccessToken"] = () => {};
 export const registerAccessTokenHandlers = (
@@ -18,9 +19,11 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Request Interceptor
-axiosInstance.interceptors.request.use((config) => {
-  if (!config.url?.startsWith("/auth-api/auth/")) {
+// request interceptor
+axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
+  const shouldAttachToken =
+    config.skipAuth !== false && !config.url?.includes("/auth-api/v1/auth/");
+  if (shouldAttachToken) {
     const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

@@ -1,14 +1,23 @@
+import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router";
-import "./App.css";
 import BottomBarComponent from "./components/bottom-bar";
-import HomePage from "./pages/home";
+import { useAccessTokenContext } from "./lib/hooks/useAccessToken";
 import { DeviceDetailsProvider } from "./lib/provider/device-details-provider";
 import { ThemeProvider } from "./lib/provider/theme-provider";
+import { registerAccessTokenHandlers } from "./lib/utils/axios-instance";
 import CreatePage from "./pages/create";
+import HomePage from "./pages/home";
 import ProfilePage from "./pages/profile";
 import SigninPage from "./pages/signin";
 import SignUpPage from "./pages/signup";
 function App() {
+  const accessToken = useAccessTokenContext();
+  useEffect(() => {
+    registerAccessTokenHandlers(
+      accessToken.getAccessToken,
+      accessToken.setAccessToken
+    );
+  }, []);
   return (
     <ThemeProvider>
       <DeviceDetailsProvider>

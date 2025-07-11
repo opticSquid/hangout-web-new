@@ -1,4 +1,4 @@
-import type { ApiResponse } from "@/lib/types/api-response";
+import type { ApiResponse } from "@/lib/types/model/api-response";
 import type { SignupFormProps } from "@/lib/types/props/signup-form-props";
 import type { SignupFormErrors, SignupFormSchema } from "@/lib/types/signup";
 import {

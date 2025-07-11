@@ -1,4 +1,8 @@
+import { useAccessTokenContext } from "@/lib/hooks/useAccessToken";
+import { useDeviceDetails } from "@/lib/hooks/useDeviceDetails";
+import { Login } from "@/lib/services/login-service";
 import type { LoginFormErrors, LoginFormSchema } from "@/lib/types/login";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import {
   useState,
   type ChangeEvent,
@@ -8,6 +12,7 @@ import {
 import { Link } from "react-router";
 import LoadingOverlay from "./loading-overlay";
 import PasswordInputComponent from "./password-input";
+import { TrustDeviceAlertComponent } from "./trust-device-alert";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -18,16 +23,20 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import type { ApiResponse } from "@/lib/types/api-response";
 
 function LoginFormComponent(): ReactElement {
+  const deviceDetails = useDeviceDetails();
+  const accessTokenContext = useAccessTokenContext();
   const [form, setForm] = useState<LoginFormSchema>({
     username: "",
     password: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<LoginFormErrors>({});
-  const [apiError, setApiError] = useState<ApiResponse<undefined>>();
+  const [apiError, setApiError] = useState<ProblemDetail>();
+  const [openNotTrustedAlert, setOpenNotTrustedAlert] = useState<
+    boolean | undefined
+  >();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -58,18 +67,18 @@ function LoginFormComponent(): ReactElement {
     }
     try {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise((res) => setTimeout(res, 5000));
-      console.log("Logging in with", form);
-      // Navigate or save token here
-    } catch (err) {
-      setApiError({
-        error: {
-          message: "Failed to sign in.",
-          status: 500,
-          details: "Something went wrong",
-        },
-      });
+      const { accessToken, isTrustedDevice } = await Login(form, deviceDetails);
+      accessTokenContext.setAccessToken(accessToken);
+      // trustedDevice is false by default in context
+      // so when isTrustedDevice is undefined it will be false
+      // though this situation will not arise due to logic in Login function
+      if (isTrustedDevice !== undefined) {
+        accessTokenContext.setTrustedDevice(isTrustedDevice);
+        setOpenNotTrustedAlert(isTrustedDevice);
+      }
+    } catch (err: any) {
+      const problem = err as ProblemDetail;
+      setApiError(problem);
     } finally {
       setIsLoading(false);
     }
@@ -123,6 +132,9 @@ function LoginFormComponent(): ReactElement {
         </CardFooter>
       </Card>
       {isLoading && <LoadingOverlay message="getting entry pass..." />}
+      {openNotTrustedAlert !== undefined && openNotTrustedAlert === true && (
+        <TrustDeviceAlertComponent />
+      )}
     </div>
   );
 }

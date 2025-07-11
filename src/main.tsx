@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { AccessTokenProvider } from "./lib/provider/access-token-provider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,7 +15,8 @@ createRoot(document.getElementById("root")!).render(
     <meta name="theme-color" content="#000000" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="touch-icon" href="/icons/icon-192x192.png" />
-
-    <App />
+    <AccessTokenProvider>
+      <App />
+    </AccessTokenProvider>
   </StrictMode>
 );
