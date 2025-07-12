@@ -22,9 +22,7 @@ export async function Login(
         withCredentials: true,
       }
     );
-    let data = response.data as LoginResponse;
-    data.isTrustedDevice = !(response.status === 307);
-    return data;
+    return response.data as LoginResponse;
   } catch (error) {
     if (isAxiosError(error)) {
       if (error.response && error.response.data) {

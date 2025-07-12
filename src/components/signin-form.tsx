@@ -9,10 +9,10 @@ import {
   type FormEvent,
   type ReactElement,
 } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import LoadingOverlay from "./loading-overlay";
 import PasswordInputComponent from "./password-input";
-import { TrustDeviceAlertComponent } from "./trust-device-alert";
+import TrustDeviceAlertComponent from "./trust-device-alert";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -23,10 +23,13 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import ErrorComponent from "./error";
+import { AlertDialogAction } from "./ui/alert-dialog";
 
-function LoginFormComponent(): ReactElement {
+function SigninFormComponent(): ReactElement {
   const deviceDetails = useDeviceDetails();
   const accessTokenContext = useAccessTokenContext();
+  const navigate = useNavigate();
   const [form, setForm] = useState<LoginFormSchema>({
     username: "",
     password: "",
@@ -34,9 +37,8 @@ function LoginFormComponent(): ReactElement {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [apiError, setApiError] = useState<ProblemDetail>();
-  const [openNotTrustedAlert, setOpenNotTrustedAlert] = useState<
-    boolean | undefined
-  >();
+  const [openNotTrustedAlert, setOpenNotTrustedAlert] =
+    useState<boolean>(false);
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -70,11 +72,12 @@ function LoginFormComponent(): ReactElement {
       const { accessToken, isTrustedDevice } = await Login(form, deviceDetails);
       accessTokenContext.setAccessToken(accessToken);
       // trustedDevice is false by default in context
-      // so when isTrustedDevice is undefined it will be false
-      // though this situation will not arise due to logic in Login function
-      if (isTrustedDevice !== undefined) {
-        accessTokenContext.setTrustedDevice(isTrustedDevice);
-        setOpenNotTrustedAlert(isTrustedDevice);
+      accessTokenContext.setTrustedDevice(isTrustedDevice);
+      console.log("trusted device: ", isTrustedDevice);
+      if (isTrustedDevice === false) {
+        setOpenNotTrustedAlert(true);
+      } else {
+        navigate("/");
       }
     } catch (err: any) {
       const problem = err as ProblemDetail;
@@ -132,10 +135,17 @@ function LoginFormComponent(): ReactElement {
         </CardFooter>
       </Card>
       {isLoading && <LoadingOverlay message="getting entry pass..." />}
-      {openNotTrustedAlert !== undefined && openNotTrustedAlert === true && (
-        <TrustDeviceAlertComponent />
+      {openNotTrustedAlert === true && <TrustDeviceAlertComponent />}
+      {apiError ? (
+        apiError.title === "Bad credentials" && (
+          <ErrorComponent error={apiError} setError={setApiError} />
+        )
+      ) : (
+        <ErrorComponent error={apiError} setError={setApiError}>
+          <AlertDialogAction>Logout</AlertDialogAction>
+        </ErrorComponent>
       )}
     </div>
   );
 }
-export default LoginFormComponent;
+export default SigninFormComponent;

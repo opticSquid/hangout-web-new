@@ -20,6 +20,7 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import ErrorComponent from "./error";
 
 function SignupFromComponent(props: SignupFormProps): ReactElement {
   const [form, setForm] = useState<SignupFormSchema>({
@@ -173,6 +174,7 @@ function SignupFromComponent(props: SignupFormProps): ReactElement {
         </CardFooter>
       </Card>
       {isLoading && <LoadingOverlay message="Lets HangOut!!!" />}
+      {apiError && <ErrorComponent {...apiError} />}
     </div>
   );
 }

@@ -1,22 +1,22 @@
 import { useAccessTokenContext } from "@/lib/hooks/useAccessToken";
+import { useDeviceDetails } from "@/lib/hooks/useDeviceDetails";
+import { Trust } from "@/lib/services/trust-service";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import { useState, type ReactElement } from "react";
 import { useNavigate } from "react-router";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "./ui/alert-dialog";
-import type { ProblemDetail } from "@/lib/types/model/problem-detail";
-import { Trust } from "@/lib/services/trust-service";
+import ErrorComponent from "./error";
 import LoadingOverlay from "./loading-overlay";
-import { useDeviceDetails } from "@/lib/hooks/useDeviceDetails";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 
-export function TrustDeviceAlertComponent(): ReactElement {
+function TrustDeviceAlertComponent(): ReactElement {
   const deviceDetails = useDeviceDetails();
   const accessTokenContext = useAccessTokenContext();
   const navigate = useNavigate();
@@ -39,32 +39,33 @@ export function TrustDeviceAlertComponent(): ReactElement {
   };
   return (
     <>
-      <AlertDialog open={accessTokenContext.isTrustedDevice()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>New Device Login Detected</AlertDialogTitle>
-            <AlertDialogDescription>
+      <Dialog open={!accessTokenContext.isTrustedDevice()}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New Device Login Detected</DialogTitle>
+            <DialogDescription>
               You are logging in through this device for the first time. Do you
               trust this device? If yes click on <strong>Trust session</strong>
               button and all capabilities of the platform will be unloked or if
               you click on <strong>Continue</strong> butoon you will be logged
               in but only some capabilities of the platform will be available
               and you will automatically be logged out within 10 mins
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => navigate("/")}>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => navigate("/")}>
               Continue
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={trustDevice}>
-              Trust session
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+            <Button onClick={trustDevice}>Trust session</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {isLoading && (
         <LoadingOverlay message="trying to unlock the full experience" />
       )}
+      {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </>
   );
 }
+
+export default TrustDeviceAlertComponent;

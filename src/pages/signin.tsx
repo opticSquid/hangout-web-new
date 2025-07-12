@@ -1,7 +1,14 @@
-import LoginFormComponent from "@/components/login-form";
-import { type ReactElement } from "react";
+import SigninFormComponent from "@/components/signin-form";
+import { useAccessTokenContext } from "@/lib/hooks/useAccessToken";
+import { useEffect, type ReactElement } from "react";
+import { useNavigate } from "react-router";
 
 function SigninPage(): ReactElement {
-  return <LoginFormComponent />;
+  const accessTokenContext = useAccessTokenContext();
+  const navigate = useNavigate();
+  useEffect(() => {
+    accessTokenContext.getAccessToken() !== null && navigate(-1);
+  }, []);
+  return <SigninFormComponent />;
 }
 export default SigninPage;
