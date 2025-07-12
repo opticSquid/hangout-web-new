@@ -22,7 +22,7 @@ const axiosInstance = axios.create({
 // request interceptor
 axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
   const shouldAttachToken =
-    config.skipAuth !== false && !config.url?.includes("/auth-api/v1/auth/");
+    !config.skipAuth && !config.url?.startsWith("/auth-api/v1/auth/");
   if (shouldAttachToken) {
     const token = getAccessToken();
     if (token) {

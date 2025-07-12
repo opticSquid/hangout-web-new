@@ -1,4 +1,4 @@
-import type { ApiResponse } from "@/lib/types/model/api-response";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { SignupFormProps } from "@/lib/types/props/signup-form-props";
 import type { SignupFormErrors, SignupFormSchema } from "@/lib/types/signup";
 import {
@@ -8,6 +8,7 @@ import {
   type ReactElement,
 } from "react";
 import { Link } from "react-router";
+import ErrorComponent from "./error";
 import LoadingOverlay from "./loading-overlay";
 import PasswordInputComponent from "./password-input";
 import { Button } from "./ui/button";
@@ -20,7 +21,7 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import ErrorComponent from "./error";
+import { Signup } from "@/lib/services/signup-service";
 
 function SignupFromComponent(props: SignupFormProps): ReactElement {
   const [form, setForm] = useState<SignupFormSchema>({
@@ -31,7 +32,7 @@ function SignupFromComponent(props: SignupFormProps): ReactElement {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<SignupFormErrors>({});
-  const [apiError, setApiError] = useState<ApiResponse<undefined>>();
+  const [apiError, setApiError] = useState<ProblemDetail>();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,19 +82,11 @@ function SignupFromComponent(props: SignupFormProps): ReactElement {
     }
     try {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise((res) => setTimeout(res, 5000));
-      console.log("Logging in with", form);
-      // set email sent alert to true
+      await Signup(form);
       props.setShowAlert(true);
     } catch (err) {
-      setApiError({
-        error: {
-          message: "Failed to sign in.",
-          status: 500,
-          details: "Something went wrong",
-        },
-      });
+      const problem = err as ProblemDetail;
+      setApiError(problem);
     } finally {
       setIsLoading(false);
     }
@@ -174,7 +167,7 @@ function SignupFromComponent(props: SignupFormProps): ReactElement {
         </CardFooter>
       </Card>
       {isLoading && <LoadingOverlay message="Lets HangOut!!!" />}
-      {apiError && <ErrorComponent {...apiError} />}
+      {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </div>
   );
 }

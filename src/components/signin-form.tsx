@@ -1,6 +1,6 @@
 import { useAccessTokenContext } from "@/lib/hooks/useAccessToken";
 import { useDeviceDetails } from "@/lib/hooks/useDeviceDetails";
-import { Login } from "@/lib/services/login-service";
+import { Signin } from "@/lib/services/signin-service";
 import type { LoginFormErrors, LoginFormSchema } from "@/lib/types/login";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import {
@@ -69,7 +69,10 @@ function SigninFormComponent(): ReactElement {
     }
     try {
       setIsLoading(true);
-      const { accessToken, isTrustedDevice } = await Login(form, deviceDetails);
+      const { accessToken, isTrustedDevice } = await Signin(
+        form,
+        deviceDetails
+      );
       accessTokenContext.setAccessToken(accessToken);
       // trustedDevice is false by default in context
       accessTokenContext.setTrustedDevice(isTrustedDevice);
@@ -137,7 +140,7 @@ function SigninFormComponent(): ReactElement {
       {isLoading && <LoadingOverlay message="getting entry pass..." />}
       {openNotTrustedAlert === true && <TrustDeviceAlertComponent />}
       {apiError ? (
-        apiError.title === "Bad credentials" && (
+        apiError.title === "Bad Credentials" && (
           <ErrorComponent error={apiError} setError={setApiError} />
         )
       ) : (
