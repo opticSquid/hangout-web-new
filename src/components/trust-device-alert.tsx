@@ -1,7 +1,8 @@
-import { useAccessTokenContext } from "@/lib/hooks/useAccessToken";
 import { useDeviceDetails } from "@/lib/hooks/useDeviceDetails";
 import { Trust } from "@/lib/services/trust-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import type { SigninResponse } from "@/lib/types/model/signin-response";
+import type { TrustDeviceAlertProps } from "@/lib/types/props/trust-device-alert-props";
 import { useState, type ReactElement } from "react";
 import { useNavigate } from "react-router";
 import ErrorComponent from "./error";
@@ -16,20 +17,19 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 
-function TrustDeviceAlertComponent(): ReactElement {
+function TrustDeviceAlertComponent(props: TrustDeviceAlertProps): ReactElement {
   const deviceDetails = useDeviceDetails();
-  const accessTokenContext = useAccessTokenContext();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<ProblemDetail>();
   const trustDevice = async () => {
     try {
       setIsLoading(true);
-      const response = await Trust(deviceDetails);
-      accessTokenContext.setAccessToken(response.accessToken);
-      response.isTrustedDevice !== undefined &&
-        accessTokenContext.setTrustedDevice(response.isTrustedDevice);
-      navigate("/");
+      const response: SigninResponse = await Trust(deviceDetails);
+      props.handleTrustResult({
+        accessToken: response.accessToken,
+        trustedDevice: response.isTrustedDevice,
+      });
     } catch (error: any) {
       const problem = error as ProblemDetail;
       setApiError(problem);
@@ -39,7 +39,7 @@ function TrustDeviceAlertComponent(): ReactElement {
   };
   return (
     <>
-      <Dialog open={!accessTokenContext.isTrustedDevice()}>
+      <Dialog open={props.shouldOpen} onOpenChange={props.onClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>New Device Login Detected</DialogTitle>

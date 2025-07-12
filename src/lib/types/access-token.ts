@@ -1,7 +1,7 @@
-export type AccessTokenContextType = {
+export type AccessTokenObject = {
   accessToken: string | null;
   trustedDevice: boolean;
-} & AccessTokenHandlers;
+};
 
 export type AccessTokenHandlers = {
   getAccessToken: () => string | null;
@@ -9,3 +9,5 @@ export type AccessTokenHandlers = {
   isTrustedDevice: () => boolean;
   setTrustedDevice: (trustedDevice: boolean) => void;
 };
+
+export type AccessTokenContextType = AccessTokenObject & AccessTokenHandlers;

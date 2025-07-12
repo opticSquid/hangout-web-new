@@ -1,18 +1,19 @@
-import { useAccessTokenContext } from "@/lib/hooks/useAccessToken";
 import { useDeviceDetails } from "@/lib/hooks/useDeviceDetails";
 import { Signin } from "@/lib/services/signin-service";
 import type { LoginFormErrors, LoginFormSchema } from "@/lib/types/login";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import type { SigninFormProps } from "@/lib/types/props/SigninFormProps";
 import {
   useState,
   type ChangeEvent,
   type FormEvent,
   type ReactElement,
 } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
+import ErrorComponent from "./error";
 import LoadingOverlay from "./loading-overlay";
 import PasswordInputComponent from "./password-input";
-import TrustDeviceAlertComponent from "./trust-device-alert";
+import { AlertDialogAction } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -23,13 +24,9 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import ErrorComponent from "./error";
-import { AlertDialogAction } from "./ui/alert-dialog";
 
-function SigninFormComponent(): ReactElement {
+function SigninFormComponent(props: SigninFormProps): ReactElement {
   const deviceDetails = useDeviceDetails();
-  const accessTokenContext = useAccessTokenContext();
-  const navigate = useNavigate();
   const [form, setForm] = useState<LoginFormSchema>({
     username: "",
     password: "",
@@ -37,8 +34,6 @@ function SigninFormComponent(): ReactElement {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [apiError, setApiError] = useState<ProblemDetail>();
-  const [openNotTrustedAlert, setOpenNotTrustedAlert] =
-    useState<boolean>(false);
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -73,15 +68,10 @@ function SigninFormComponent(): ReactElement {
         form,
         deviceDetails
       );
-      accessTokenContext.setAccessToken(accessToken);
-      // trustedDevice is false by default in context
-      accessTokenContext.setTrustedDevice(isTrustedDevice);
-      console.log("trusted device: ", isTrustedDevice);
-      if (isTrustedDevice === false) {
-        setOpenNotTrustedAlert(true);
-      } else {
-        navigate("/");
-      }
+      props.handleSigninResult({
+        accessToken: accessToken,
+        trustedDevice: isTrustedDevice,
+      });
     } catch (err: any) {
       const problem = err as ProblemDetail;
       setApiError(problem);
@@ -138,7 +128,6 @@ function SigninFormComponent(): ReactElement {
         </CardFooter>
       </Card>
       {isLoading && <LoadingOverlay message="getting entry pass..." />}
-      {openNotTrustedAlert === true && <TrustDeviceAlertComponent />}
       {apiError ? (
         apiError.title === "Bad Credentials" && (
           <ErrorComponent error={apiError} setError={setApiError} />
