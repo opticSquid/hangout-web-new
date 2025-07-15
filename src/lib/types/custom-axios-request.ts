@@ -1,6 +1,6 @@
-import type { AxiosRequestConfig, AxiosRequestHeaders } from "axios";
+import type { InternalAxiosRequestConfig } from "axios";
 
-export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+export interface CustomAxiosRequestConfig<D = any>
+  extends InternalAxiosRequestConfig<D> {
   skipAuth?: boolean;
-  headers: AxiosRequestHeaders;
 }

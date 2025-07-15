@@ -1,11 +1,11 @@
 import { useCallback, useRef } from "react";
 import type { ApiResponse } from "../types/model/api-response";
-import type { FetchPostsRq, PagePointer } from "../types/posts";
-import type { FetchPostsRs } from "../types/posts";
+import type { FetchPostsQueryParams, PagePointer } from "../types/posts";
+import type { PostList } from "../types/posts";
 import type { SearchRadius } from "../types/location";
 
 export default function useFeedUtils() {
-  const searchRadius = useRef<SearchRadius>({ min: 0, max: 1000 });
+  const searchRadius = useRef<SearchRadius>({ min: 0, max: 5000 });
   const pagePointer = useRef<PagePointer>({ currentPage: 1, totalPages: 0 });
 
   const increaseSearchRadius = () => {
@@ -20,10 +20,8 @@ export default function useFeedUtils() {
   };
 
   const fetchPosts = useCallback(
-    async (
-      location: GeolocationPosition
-    ): Promise<ApiResponse<FetchPostsRs>> => {
-      const rqBody: FetchPostsRq = {
+    async (location: GeolocationPosition): Promise<ApiResponse<PostList>> => {
+      const rqBody: FetchPostsQueryParams = {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
         minSearchRadius: searchRadius.current.min,
@@ -46,7 +44,7 @@ export default function useFeedUtils() {
         };
       }
 
-      const posts: FetchPostsRs = await response.json();
+      const posts: PostList = await response.json();
 
       if (posts.totalPages !== undefined) {
         if (posts.totalPages <= 1) {

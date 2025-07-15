@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { AccessTokenProvider } from "./lib/provider/access-token-provider.tsx";
-
+import { ErrorBoundary } from "react-error-boundary";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {/* Make the app full screen on iOS Safari */}
@@ -15,8 +15,10 @@ createRoot(document.getElementById("root")!).render(
     <meta name="theme-color" content="#000000" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="touch-icon" href="/icons/icon-192x192.png" />
-    <AccessTokenProvider>
-      <App />
-    </AccessTokenProvider>
+    <ErrorBoundary fallback={<div>Something went wrong</div>}>
+      <AccessTokenProvider>
+        <App />
+      </AccessTokenProvider>
+    </ErrorBoundary>
   </StrictMode>
 );

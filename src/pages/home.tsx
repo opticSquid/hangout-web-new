@@ -1,16 +1,32 @@
 import PostComponent from "@/components/post";
-import { useEffect, useMemo, useState, type ReactElement } from "react";
-import useFeedUtils from "../lib/context/feed-utils";
-import type { Post } from "../lib/types/posts";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import type {
+  SearchParams,
+  Post,
+  PostList,
+  PagePointer,
+} from "../lib/types/posts";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import { FetchPosts } from "@/lib/services/fetch-posts";
+import { LoadNPosts, SavePostsToDB } from "@/lib/db/index-db";
+import LoadingOverlay from "@/components/loading-overlay";
+import ErrorComponent from "@/components/error";
 
 function HomePage(): ReactElement {
-  const { fetchPosts } = useFeedUtils();
-  const [userLocation, setUserLocation] = useState<GeolocationPosition | null>(
-    null
-  );
-  const [loadingData, setLoadingData] = useState<boolean>(true);
-  const [postList, setPostList] = useState<Post[]>([]);
-  const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<GeolocationPosition>();
+  const searchParams = useRef<SearchParams>({
+    minSearchRadius: 0,
+    maxSearchRadius: 5000,
+    pageNumber: 1,
+  });
+  const [loadData, setLoadData] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [posts, setPosts] = useState<Post[]>();
+  const [apiError, setApiError] = useState<ProblemDetail>();
+  // const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
+  const limit: number = 25;
+  const offset = useRef<number>(0);
+
   // Fetches user's location
   useEffect(() => {
     if (navigator.geolocation) {
@@ -35,139 +51,116 @@ function HomePage(): ReactElement {
     }
   }, []);
 
+  // TODO: define the function
+  const tweakSearchParamForNextSearch = (pagePointer: PagePointer) => {};
+
   // Fetches data given user's location
   useEffect(() => {
     async function fetchData() {
-      if (userLocation != null) {
-        for (let i = 0; i < 5; i++) {
-          const response = await fetchPosts(userLocation);
-          if (response.data) {
-            if (response.data.posts.length > 0) {
-              setPostList((prevState) => {
-                return [...prevState, ...(response.data?.posts || [])];
-              });
-              setLoadingData(false);
-              break;
-            }
-          } else {
-            console.error("error fetchig posts");
-            setLoadingData(false);
-            break;
-          }
+      if (userLocation !== undefined) {
+        try {
+          setIsLoading(true);
+          const data: PostList = await FetchPosts({
+            lat: userLocation.coords.latitude,
+            lon: userLocation.coords.longitude,
+            minSearchRadius: searchParams.current.minSearchRadius,
+            maxSearchRadius: searchParams.current.maxSearchRadius,
+            pageNumber: searchParams.current.pageNumber,
+          });
+          tweakSearchParamForNextSearch({
+            currentPage: data.currentPage,
+            totalPages: data.totalPages,
+          });
+          await SavePostsToDB(data.posts);
+          const nextPosts = await LoadNPosts(offset.current, limit);
+          const postList =
+            posts !== undefined ? posts.concat(nextPosts) : nextPosts;
+          console.log("post list", postList);
+          setPosts(postList);
+          offset.current = offset.current + limit;
+        } catch (error: any) {
+          const problem = error as ProblemDetail;
+          setApiError(problem);
+        } finally {
+          setIsLoading(false);
+          setLoadData(false);
         }
       }
     }
-    if (loadingData) {
+    if (loadData === true) {
+      console.log("loading data, location: ", userLocation);
       fetchData();
     }
-  }, [location, loadingData, fetchPosts]);
+  }, [userLocation, loadData]);
 
   /**
    * Calculates the 75% th element of the list. When that elment becomes visible it triggers additional data load
    */
-  const postToTriggerDataLoad = useMemo(
-    () => Math.floor(postList.length * 0.75),
-    [postList]
-  );
+  // const postToTriggerDataLoad = useMemo(() => {
+  //   if (posts) {
+  //     if (posts.length < 5) {
+  //       return 0; // Or handle as an error/special case
+  //     }
+  //     return posts.length - 5;
+  //   } else {
+  //     return undefined;
+  //   }
+  // }, [posts]);
 
   /**
    * Watches the 75% th element of the list. when that is visible, starts to load additional posts in background
    */
-  useEffect(() => {
-    const posts = document.querySelectorAll(".post-container");
-    if (posts.length > 0) {
-      const triggerElement = posts[postToTriggerDataLoad];
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setLoadingData(true);
-          }
-        },
-        { threshold: 0.5 }
-      );
+  // useEffect(() => {
+  //   const posts = document.querySelectorAll(".post-container");
+  //   if (posts.length > 0) {
+  //     const triggerElement =
+  //       posts[postToTriggerDataLoad ? postToTriggerDataLoad : 0];
+  //     const observer = new IntersectionObserver(
+  //       ([entry]) => {
+  //         if (entry.isIntersecting) {
+  //           setLoadData(true);
+  //         }
+  //       },
+  //       { threshold: 0.5 }
+  //     );
 
-      if (triggerElement) observer.observe(triggerElement);
-      return () => observer.unobserve(triggerElement);
-    }
-  }, [postToTriggerDataLoad]);
+  //     if (triggerElement) observer.observe(triggerElement);
+  //     return () => observer.unobserve(triggerElement);
+  //   }
+  // }, [postToTriggerDataLoad]);
 
   /**
    * autoplays the currently visible video and pauses others
    */
-  useEffect(() => {
-    const postElements = document.querySelectorAll(".post-container");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisiblePostId(entry.target.getAttribute("post-id"));
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
+  // useEffect(() => {
+  //   const postElements = document.querySelectorAll(".post-container");
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           setVisiblePostId(entry.target.getAttribute("post-id"));
+  //         }
+  //       });
+  //     },
+  //     { threshold: 0.5 }
+  //   );
 
-    postElements.forEach((el) => observer.observe(el));
-    return () => postElements.forEach((el) => observer.unobserve(el));
-  }, [postToTriggerDataLoad]);
-
-  const dummyPost1: Post = {
-    postId: "a",
-    ownerId: 0,
-    filename:
-      "531530e17baa69d03de1d4b4135e76a2a0eab9a85d76c851b3616a791a6463b3498023aad9144d0236ee941befb09b1c87b17e2091912cd407a88332846f3f8e.mpd",
-    contentType: "video/mp4",
-    postDescription: "description",
-    hearts: 0,
-    comments: 0,
-    interactions: 0,
-    createdAt: "2025-06-21T14:45:30.123Z",
-    state: "West Bengal",
-    city: "Kolkata",
-    location: {
-      type: "Point",
-      crs: {
-        type: "name",
-        properties: {
-          name: "EPSG:4326",
-        },
-      },
-      coordinates: [0, 0],
-    },
-    distance: 124,
-  };
-  const dummyPost2: Post = {
-    postId: "a",
-    ownerId: 0,
-    filename:
-      "531530e17baa69d03de1d4b4135e76a2a0eab9a85d76c851b3616a791a6463b3498023aad9144d0236ee941befb09b1c87b17e2091912cd407a88332846f3f8e.mpd",
-    contentType: "video/mp4",
-    postDescription: "description",
-    hearts: 29,
-    comments: 52,
-    interactions: 0,
-    createdAt: "2025-06-21T14:45:30.123Z",
-    state: "West Bengal",
-    city: "Kolkata",
-    location: {
-      type: "Point",
-      crs: {
-        type: "name",
-        properties: {
-          name: "EPSG:4326",
-        },
-      },
-      coordinates: [0, 0],
-    },
-    distance: 47,
-  };
+  //   postElements.forEach((el) => observer.observe(el));
+  //   return () => postElements.forEach((el) => observer.unobserve(el));
+  // }, [postToTriggerDataLoad]);
   return (
     <>
       <section className="h-full overflow-y-auto scroll-smooth snap-y snap-mandatory">
-        <PostComponent {...dummyPost1} />
-        <PostComponent {...dummyPost2} />
-        <PostComponent {...dummyPost1} />
+        {posts !== undefined ? (
+          posts.map((post: Post) => (
+            <PostComponent key={post.postId} {...post} />
+          ))
+        ) : (
+          <div>no posts</div>
+        )}
       </section>
+      {isLoading && <LoadingOverlay message="Loading posts..." />}
+      <ErrorComponent error={apiError} setError={setApiError} />
     </>
   );
 }

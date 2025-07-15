@@ -5,13 +5,15 @@ export type PagePointer = {
   totalPages: number;
 };
 
-export type FetchPostsRq = {
-  lat: number;
-  lon: number;
+export type SearchParams = {
   minSearchRadius: number;
   maxSearchRadius: number;
-  pageNumber: number;
+  pageNumber?: number;
 };
+export type FetchPostsQueryParams = {
+  lat: number;
+  lon: number;
+} & SearchParams;
 
 type PostContent = {
   postId: string;
@@ -34,10 +36,9 @@ export type PostInteractions = {
 
 export type Post = PostContent & PostInteractions;
 
-export type FetchPostsRs = {
+export type PostList = {
   posts: Post[];
-  totalPages?: number;
-};
+} & PagePointer;
 
 export type PostOwner = {
   name: string;
