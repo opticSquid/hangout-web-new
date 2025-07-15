@@ -22,14 +22,10 @@ export async function LoadNPosts(
   offset: number,
   limit: number
 ): Promise<Post[]> {
-  return new Promise((resolve) => {
-    resolve(
-      db.posts
-        .orderBy("distance")
-        .reverse()
-        .offset(offset)
-        .limit(limit)
-        .toArray()
-    );
-  });
+  return db.posts
+    .orderBy("distance")
+    .reverse()
+    .offset(offset)
+    .limit(limit)
+    .toArray();
 }
