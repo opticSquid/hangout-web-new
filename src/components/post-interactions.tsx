@@ -1,29 +1,55 @@
+import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
+import { UpdateHeartCount } from "@/lib/services/heart-service";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { PostInteractionProps } from "@/lib/types/props/post-interactions-props";
 import { HeartIcon, MapPinIcon, MessageCircleIcon } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import ShowLocationOnMapComponent from "./show-location-on-map";
 import { Button } from "./ui/button";
+import ErrorComponent from "./error";
 
 function PostInteractionsComponent(props: PostInteractionProps) {
+  const accessTokenObject = useAccessTokenContextObject();
+  const navigate = useNavigate();
   const [hearted, setHearted] = useState<{
     isHearted: boolean;
     heartCount: number;
   }>({ isHearted: false, heartCount: props.heartCount });
   const [isLocationShowed, setIsLocationShowed] = useState<boolean>(false);
-  const toggleIsHearted = () => {
-    setHearted((prevState) => {
-      return {
-        isHearted: !prevState.isHearted,
-        heartCount: prevState.isHearted
-          ? prevState.heartCount - 1
-          : prevState.heartCount + 1,
-      };
-    });
+  const [apiError, setApiError] = useState<ProblemDetail>();
+  const toggleIsHearted = async () => {
+    if (accessTokenObject === null) {
+      navigate("/");
+    } else {
+      const currentHeartCount = hearted.isHearted
+        ? hearted.heartCount - 1
+        : hearted.heartCount + 1;
+      try {
+        await UpdateHeartCount(currentHeartCount > hearted.heartCount, {
+          postId: props.postId,
+        });
+        setHearted((prevState) => {
+          return {
+            isHearted: !prevState.isHearted,
+            heartCount: currentHeartCount,
+          };
+        });
+      } catch (error: any) {
+        error = error as ProblemDetail;
+        setApiError(error);
+      }
+    }
   };
   return (
     <div className="absolute right-2 bottom-20 flex flex-col gap-y-6 z-10">
       <div className="flex flex-col items-center gap-y-2">
-        <Button variant="ghost" size="icon" onClick={toggleIsHearted}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleIsHearted}
+          disabled={accessTokenObject === null}
+        >
           {hearted.isHearted ? (
             <HeartIcon
               fill="oklch(0.705 0.213 47.604)"
@@ -62,6 +88,7 @@ function PostInteractionsComponent(props: PostInteractionProps) {
           setIsOpen={setIsLocationShowed}
         />
       )}
+      {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </div>
   );
 }

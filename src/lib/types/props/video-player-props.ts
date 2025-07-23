@@ -5,4 +5,5 @@ export interface VideoPlayerProps {
   filename: string;
   autoPlay: boolean;
   postInteractions: PostInteractions;
+  postId: string;
 }

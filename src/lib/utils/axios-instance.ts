@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { AccessTokenHandlers } from "../types/access-token";
 import type { CustomAxiosRequestConfig } from "../types/custom-axios-request";
+import { osMap, type DeviceDetails } from "../types/device-details";
 let getAccessToken: AccessTokenHandlers["getAccessToken"] = () => null;
 let setAccessToken: AccessTokenHandlers["setAccessToken"] = () => {};
 export const registerAccessTokenHandlers = (
@@ -13,6 +14,28 @@ export const registerAccessTokenHandlers = (
 
 let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
+
+const deviceSpecs: DeviceDetails = {
+  os: { name: "", version: "" },
+  screen: { height: 0, width: 0 },
+};
+if (typeof screen.width === "number") {
+  deviceSpecs.screen.width = screen.width;
+}
+if (typeof screen.height === "number") {
+  deviceSpecs.screen.height = screen.height;
+}
+let found: boolean = false;
+for (const [key, value] of Object.entries(osMap)) {
+  if (window.navigator.userAgent.toLowerCase().includes(key)) {
+    deviceSpecs.os = value;
+    found = true;
+    break;
+  }
+}
+if (!found) {
+  deviceSpecs.os = { name: "unknown" };
+}
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "",
@@ -43,8 +66,15 @@ axiosInstance.interceptors.response.use(
 
       if (!isRefreshing) {
         isRefreshing = true;
-        refreshPromise = axios
-          .get("/auth-api/auth/renew-token", { withCredentials: true })
+        refreshPromise = axiosInstance
+          .get("/auth-api/v1/auth/renew", {
+            headers: {
+              OS: deviceSpecs.os.name,
+              "Screen-Width": deviceSpecs.screen.width,
+              "Screen-Height": deviceSpecs.screen.height,
+            },
+            withCredentials: true,
+          })
           .then((res) => {
             const newToken = res.data.accessToken;
             setAccessToken(newToken);

@@ -55,3 +55,7 @@ export type PostControls = {
   canPlayVideo: boolean;
   showDistance: boolean;
 };
+
+export type HeartSchema = {
+  postId: string;
+};

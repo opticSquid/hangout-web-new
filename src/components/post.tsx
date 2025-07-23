@@ -8,6 +8,7 @@ function PostComponent(props: PostComponentProps): ReactElement {
       post-id={props.post.postId}
     >
       <VideoPlayer
+        postId={props.post.postId}
         filename={props.post.filename}
         hostURL={`${import.meta.env.VITE_API_BASE_URL}/processed`}
         autoPlay={props.canPlayVideo}

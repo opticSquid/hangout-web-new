@@ -79,6 +79,7 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
         className="aspect-9/16 object-cover w-full"
       />
       <PostInteractionsComponent
+        postId={props.postId}
         heartCount={props.postInteractions.hearts}
         commentCount={props.postInteractions.comments}
         distance={props.postInteractions.distance}
