@@ -8,7 +8,7 @@ export type PagePointer = {
 export type SearchParams = {
   minSearchRadius: number;
   maxSearchRadius: number;
-  pageNumber?: number;
+  pageNumber: number;
 };
 export type FetchPostsQueryParams = {
   lat: number;

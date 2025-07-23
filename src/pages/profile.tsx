@@ -1,7 +1,7 @@
 import PostComponent from "@/components/post";
 import ProfileHeaderComponent from "@/components/profile-header";
 import { Button } from "@/components/ui/button";
-import type { Post } from "@/lib/types/posts";
+import type { Post } from "@/lib/types/post";
 import type { Profile } from "@/lib/types/profile";
 import { Grid3X3Icon } from "lucide-react";
 import type { ReactElement } from "react";

@@ -1,5 +1,5 @@
 import Dexie, { type Table } from "dexie";
-import type { Post } from "../types/posts";
+import type { Post } from "../types/post";
 
 export class PostsDB extends Dexie {
   posts!: Table<Post, string>;
@@ -22,10 +22,5 @@ export async function LoadNPosts(
   offset: number,
   limit: number
 ): Promise<Post[]> {
-  return db.posts
-    .orderBy("distance")
-    .reverse()
-    .offset(offset)
-    .limit(limit)
-    .toArray();
+  return db.posts.orderBy("distance").offset(offset).limit(limit).toArray();
 }

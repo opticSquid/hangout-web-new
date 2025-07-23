@@ -1,6 +1,6 @@
 import { AxiosHeaders, isAxiosError } from "axios";
 import type { CustomAxiosRequestConfig } from "../types/custom-axios-request";
-import type { FetchPostsQueryParams, PostList } from "../types/posts";
+import type { FetchPostsQueryParams, PostList } from "../types/post";
 import axiosInstance from "../utils/axios-instance";
 import type { ProblemDetail } from "../types/model/problem-detail";
 

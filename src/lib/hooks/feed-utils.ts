@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import type { ApiResponse } from "../types/model/api-response";
-import type { FetchPostsQueryParams, PagePointer } from "../types/posts";
-import type { PostList } from "../types/posts";
+import type { FetchPostsQueryParams, PagePointer } from "../types/post";
+import type { PostList } from "../types/post";
 import type { SearchRadius } from "../types/location";
 
 export default function useFeedUtils() {

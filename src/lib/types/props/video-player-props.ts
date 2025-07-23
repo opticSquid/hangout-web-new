@@ -1,4 +1,4 @@
-import type { PostInteractions } from "../posts";
+import type { PostInteractions } from "../post";
 
 export interface VideoPlayerProps {
   hostURL: string;

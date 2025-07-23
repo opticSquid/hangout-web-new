@@ -1,19 +1,22 @@
-import type { Post } from "@/lib/types/posts";
+import type { PostComponentProps } from "@/lib/types/props/post-component-props";
 import type { ReactElement } from "react";
 import VideoPlayer from "./video-player";
-function PostComponent(props: Post): ReactElement {
+function PostComponent(props: PostComponentProps): ReactElement {
   return (
-    <div className="snap-start snap-always h-full">
+    <div
+      className="snap-start snap-always h-full post-container"
+      post-id={props.post.postId}
+    >
       <VideoPlayer
-        filename={props.filename}
-        hostURL="http://localhost:9000/processed"
-        autoPlay={true}
+        filename={props.post.filename}
+        hostURL={`${import.meta.env.VITE_API_BASE_URL}/processed`}
+        autoPlay={props.canPlayVideo}
         postInteractions={{
-          hearts: props.hearts,
-          comments: props.comments,
-          distance: props.distance,
-          interactions: props.interactions,
-          location: props.location,
+          hearts: props.post.hearts,
+          comments: props.post.comments,
+          distance: props.post.distance,
+          interactions: props.post.interactions,
+          location: props.post.location,
         }}
       />
     </div>

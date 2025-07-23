@@ -48,6 +48,14 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
     };
   }, [props.filename]);
 
+  useEffect(() => {
+    if (props.autoPlay) {
+      videoRef.current?.play();
+    } else {
+      videoRef.current?.pause();
+    }
+  }, [props.autoPlay]);
+
   return videoNotAvailable ? (
     <Card>
       <CardHeader>
