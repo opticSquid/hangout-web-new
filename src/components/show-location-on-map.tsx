@@ -16,8 +16,8 @@ function ShowLocationOnMapComponent(
   props: ShowLocationOnMapsProps
 ): ReactElement {
   const position: Position = {
-    lat: props.location.coordinates[0],
-    lng: props.location.coordinates[1],
+    lat: props.location.coordinates[1],
+    lng: props.location.coordinates[0],
   };
   return (
     <Dialog
