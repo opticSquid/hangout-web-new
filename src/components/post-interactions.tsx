@@ -1,9 +1,9 @@
 import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
-import { UpdateHeartCount } from "@/lib/services/heart-service";
+import { HeartStatus, UpdateHeartCount } from "@/lib/services/heart-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { PostInteractionProps } from "@/lib/types/props/post-interactions-props";
 import { HeartIcon, MapPinIcon, MessageCircleIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ShowLocationOnMapComponent from "./show-location-on-map";
 import { Button } from "./ui/button";
@@ -16,6 +16,13 @@ function PostInteractionsComponent(props: PostInteractionProps) {
     isHearted: boolean;
     heartCount: number;
   }>({ isHearted: false, heartCount: props.heartCount });
+  useEffect(() => {
+    const checkHeartStatus = async () => {
+      const res = await HeartStatus({ postId: props.postId });
+      setHearted({ ...hearted, isHearted: res.hasHearted });
+    };
+    checkHeartStatus();
+  }, []);
   const [isLocationShowed, setIsLocationShowed] = useState<boolean>(false);
   const [apiError, setApiError] = useState<ProblemDetail>();
   const toggleIsHearted = async () => {

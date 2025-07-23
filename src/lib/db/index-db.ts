@@ -24,3 +24,6 @@ export async function LoadNPosts(
 ): Promise<Post[]> {
   return db.posts.orderBy("distance").offset(offset).limit(limit).toArray();
 }
+export async function TotalPostCount(): Promise<number> {
+  return db.posts.count();
+}

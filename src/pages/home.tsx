@@ -24,7 +24,7 @@ function HomePage(): ReactElement {
   const [posts, setPosts] = useState<Post[]>([]);
   const [apiError, setApiError] = useState<ProblemDetail>();
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
-  const limit: number = 25;
+  const limit: number = 7;
   const offset = useRef<number>(0);
 
   // Fetches user's location
@@ -83,8 +83,10 @@ function HomePage(): ReactElement {
         try {
           setIsLoading(true);
           const data: PostList = await FetchPosts({
-            lat: userLocation.coords.latitude,
-            lon: userLocation.coords.longitude,
+            // lat: userLocation.coords.latitude,
+            // lon: userLocation.coords.longitude,
+            lat: 22.56753960682342,
+            lon: 88.47390058400923,
             minSearchRadius: searchParams.current.minSearchRadius,
             maxSearchRadius: searchParams.current.maxSearchRadius,
             pageNumber: searchParams.current.pageNumber,
