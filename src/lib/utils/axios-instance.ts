@@ -60,8 +60,13 @@ axiosInstance.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    console.log("request error: ", error);
+    if (
+      (error.response?.status === 401 ||
+        error.response?.data.detail ===
+          "Required header 'Authorization' is not present.") &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       if (!isRefreshing) {

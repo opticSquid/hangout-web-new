@@ -11,13 +11,21 @@ export async function UpdateHeartCount(
   try {
     let response;
     if (addHeart) {
-      response = await axiosInstance.put("/post-api/v1/heart", heartDetails, {
-        withCredentials: true,
-      });
+      response = await axiosInstance.put(
+        "/post-api/v1/heart/add",
+        heartDetails,
+        {
+          withCredentials: true,
+        }
+      );
     } else {
-      response = await axiosInstance.put("/post-api/v1/heart", heartDetails, {
-        withCredentials: true,
-      });
+      response = await axiosInstance.put(
+        "/post-api/v1/heart/remove",
+        heartDetails,
+        {
+          withCredentials: true,
+        }
+      );
     }
     return response.data as DefaultResponse;
   } catch (error) {
