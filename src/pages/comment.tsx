@@ -1,8 +1,10 @@
-import AddComment from "@/components/add-comment";
+import AddCommentComponent from "@/components/add-comment";
+import CommentComponent from "@/components/comment";
 import ErrorComponent from "@/components/error";
 import VideoPlayer from "@/components/video-player";
 import { FetchAllTopLevelComments } from "@/lib/services/comment-service";
 import { FetchPostById } from "@/lib/services/fetch-posts";
+import type { Comment } from "@/lib/types/comment";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { Post } from "@/lib/types/post";
 import { useEffect, useState, type ReactElement } from "react";
@@ -28,16 +30,24 @@ function CommentPage(): ReactElement {
         try {
           const comments = await FetchAllTopLevelComments(postId);
           console.log("comments", comments);
+          // Sort comments by createdAt in descending order
+          comments.sort((a, b) => {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          });
           setComments(comments);
         } catch (error: any) {
           error = error as ProblemDetail;
           setApiError(error);
         }
       };
-      // resolve post details and comments in parallel
       Promise.all([fetchPost(), fetchComments()]);
     }
   }, [postId]);
+  const appendComment = (comment: Comment) => {
+    setComments((prevComments) => [comment, ...prevComments]);
+  };
   return postDetails !== undefined ? (
     <>
       <div
@@ -59,7 +69,24 @@ function CommentPage(): ReactElement {
           }}
         />
         <div className="h-2/5 overflow-y-scroll">
-          {postId && <AddComment type="comment" postId={postId} />}
+          {postId && (
+            <AddCommentComponent
+              type="comment"
+              postId={postId}
+              appendComment={appendComment}
+            />
+          )}
+          {comments.map((comment) => {
+            if (postId !== undefined) {
+              return (
+                <CommentComponent
+                  comment={comment}
+                  postId={postId}
+                  key={comment.commentId}
+                />
+              );
+            }
+          })}
         </div>
       </div>
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}

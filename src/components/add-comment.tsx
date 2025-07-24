@@ -6,8 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
+import { AddComment } from "@/lib/services/comment-service";
 
-function AddComment(props: AddCommentProps): ReactElement {
+function AddCommentComponent(props: AddCommentProps): ReactElement {
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   //   const [profileData, setProfileData] = useState<ProfileData>();
@@ -29,7 +30,26 @@ function AddComment(props: AddCommentProps): ReactElement {
   //     }
   //   }, [sessionState.userId]);
   // TODO: Implement the onSubmit function to handle comment submission
-  async function onSubmit() {}
+  async function onSubmit() {
+    setIsLoading(true);
+    try {
+      const response = await AddComment({
+        postId: props.postId,
+        comment: comment,
+      });
+      props.appendComment({
+        commentId: response.commentId,
+        createdAt: new Date().toUTCString(),
+        text: comment,
+        userId: 2,
+        replyCount: 0,
+      });
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <Card className="p-2 flex flex-row items-center rounded-none">
@@ -59,4 +79,4 @@ function AddComment(props: AddCommentProps): ReactElement {
   );
 }
 
-export default AddComment;
+export default AddCommentComponent;
