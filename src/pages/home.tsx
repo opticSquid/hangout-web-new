@@ -24,7 +24,7 @@ function HomePage(): ReactElement {
   const [posts, setPosts] = useState<Post[]>([]);
   const [apiError, setApiError] = useState<ProblemDetail>();
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
-  const limit: number = 7;
+  const limit: number = 3;
   const offset = useRef<number>(0);
 
   // Fetches user's location
@@ -97,9 +97,9 @@ function HomePage(): ReactElement {
           });
           await SavePostsToDB(data.posts);
           const nextPosts = await LoadNPosts(offset.current, limit);
-          const postList =
-            posts.length > 0 ? posts.concat(nextPosts) : nextPosts;
-          setPosts(postList);
+          // const postList =
+          //   posts.length > 0 ? posts.concat(nextPosts) : nextPosts;
+          setPosts((prevState) => [...prevState, ...nextPosts]);
           offset.current = offset.current + nextPosts.length;
         } catch (error: any) {
           const problem = error as ProblemDetail;

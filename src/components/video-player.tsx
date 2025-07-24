@@ -11,42 +11,75 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoNotAvailable, setVideoNotAvailable] = useState<boolean>(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const playerRef = useRef<shaka.Player | null>(null);
+
+  // wait for the video to be visible to load the video
   useEffect(() => {
-    const extractedFilename = props.filename.replace(/\.[^.]+$/, "");
-
-    if (!videoRef.current || !containerRef.current) return;
-
-    const player = new shaka.Player();
-
-    const ui = new shaka.ui.Overlay(
-      player,
-      containerRef.current,
-      videoRef.current
-    );
-    player.attach(videoRef.current);
-    ui.configure({
-      controlPanelElements: ["fullscreen"],
-    });
-    const onError = (error: ShakaError) => {
-      if (error.code === 7002) {
-        console.warn("Ignoring Shaka timeout error:", error);
-        return; // Do nothing
-      } else if (error.code === 1003) {
-        setVideoNotAvailable(true);
-      } else {
-        console.error("something wrong with shaka player: ", error);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+        }
+      },
+      {
+        rootMargin: "200px",
+        threshold: 0.25,
       }
-    };
+    );
 
-    player
-      .load(`${props.hostURL}/${extractedFilename}/${extractedFilename}.mpd`)
-      .then(() => console.log("The video has now been loaded!"))
-      .catch(onError);
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
 
     return () => {
-      player.destroy().catch(console.error);
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+
+      playerRef.current?.destroy();
     };
-  }, [props.filename]);
+  }, []);
+
+  // load videos
+  useEffect(() => {
+    if (shouldLoad) {
+      const extractedFilename = props.filename.replace(/\.[^.]+$/, "");
+
+      if (!videoRef.current || !containerRef.current) return;
+
+      const player = new shaka.Player();
+      playerRef.current = player;
+      const ui = new shaka.ui.Overlay(
+        player,
+        containerRef.current,
+        videoRef.current
+      );
+      player.attach(videoRef.current);
+      ui.configure({
+        controlPanelElements: ["fullscreen"],
+      });
+      const onError = (error: ShakaError) => {
+        if (error.code === 7002) {
+          console.warn("Ignoring Shaka timeout error:", error);
+          return; // Do nothing
+        } else if (error.code === 1003) {
+          setVideoNotAvailable(true);
+        } else {
+          console.error("something wrong with shaka player: ", error);
+        }
+      };
+
+      player
+        .load(`${props.hostURL}/${extractedFilename}/${extractedFilename}.mpd`)
+        .then(() => console.log("The video has now been loaded!"))
+        .catch(onError);
+
+      return () => {
+        player.destroy().catch(console.error);
+      };
+    }
+  }, [shouldLoad, props.filename]);
 
   useEffect(() => {
     if (props.autoPlay) {
@@ -70,21 +103,25 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
     </Card>
   ) : (
     <div data-shaka-player-container ref={containerRef} className="h-full">
-      <video
-        data-shaka-player
-        id="video"
-        ref={videoRef}
-        autoPlay={props.autoPlay}
-        loop
-        className="aspect-9/16 object-cover w-full"
-      />
-      <PostInteractionsComponent
-        postId={props.postId}
-        heartCount={props.postInteractions.hearts}
-        commentCount={props.postInteractions.comments}
-        distance={props.postInteractions.distance}
-        location={props.postInteractions.location}
-      />
+      {shouldLoad && (
+        <>
+          <video
+            data-shaka-player
+            id="video"
+            ref={videoRef}
+            autoPlay={props.autoPlay}
+            loop
+            className="aspect-9/16 object-cover w-full"
+          />
+          <PostInteractionsComponent
+            postId={props.postId}
+            heartCount={props.postInteractions.hearts}
+            commentCount={props.postInteractions.comments}
+            distance={props.postInteractions.distance}
+            location={props.postInteractions.location}
+          />
+        </>
+      )}
     </div>
   );
 }
