@@ -59,3 +59,7 @@ export type PostControls = {
 export type HeartSchema = {
   postId: string;
 };
+
+export type NewPostRs = {
+  postId: string;
+};

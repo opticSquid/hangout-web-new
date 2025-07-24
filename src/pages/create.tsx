@@ -1,15 +1,22 @@
-import SetLocationOnMapComponent from "@/components/set-location-on-map";
+import ErrorComponent from "@/components/error";
+import LoadingOverlay from "@/components/loading-overlay";
 import MediaChooserComponent from "@/components/media-chooser";
 import ReviewContentComponent from "@/components/review-content";
+import SetLocationOnMapComponent from "@/components/set-location-on-map";
+import { AddPost } from "@/lib/services/post-service";
+import type { Address } from "@/lib/types/address";
 import type { AcceptedMediaType } from "@/lib/types/media";
-import { useState, type ReactElement } from "react";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import { useState, type ReactElement } from "react";
+import { useNavigate } from "react-router";
 
 function CreatePage(): ReactElement {
+  const navigate = useNavigate();
   const [step, setStep] = useState<number>(0);
   const [media, setMedia] = useState<Blob | null>(null);
   const [mediaType, setMediaType] = useState<AcceptedMediaType>(null);
-  const [description, setDescription] = useState<string>("");
+  const [address, setAddress] = useState<Address>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<ProblemDetail>();
   const proceedToNextStep = () => {
     setStep((prevState: number) => prevState + 1);
@@ -26,12 +33,32 @@ function CreatePage(): ReactElement {
     setMediaType(null);
     setStep(1);
   };
-  const onAddDescription = (description: string) => {
-    setDescription(description);
+  const onAddAddress = (address: Address) => {
+    setAddress(address);
     proceedToNextStep();
   };
 
-  async function onSubmit(lat: number, lon: number) {}
+  // TODO: Add implementation to submit post
+  async function onSubmit(lat: number, lon: number) {
+    if (media !== null && address !== undefined) {
+      const formData = new FormData();
+      formData.append("file", media, "uploaded-media.mp4");
+      formData.append("lat", lat.toString());
+      formData.append("lon", lon.toString());
+      formData.append("state", address.state);
+      formData.append("city", address.city);
+      try {
+        setIsLoading(true);
+        await AddPost(formData);
+        navigate("/");
+      } catch (error: any) {
+        error = error as ProblemDetail;
+        setApiError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
 
   switch (step) {
     case 0: {
@@ -48,7 +75,7 @@ function CreatePage(): ReactElement {
             blob={media}
             mediaType={mediaType}
             onRetake={onRetake}
-            onAddDescription={onAddDescription}
+            onAddAddress={onAddAddress}
           />
         );
       } else {
@@ -57,7 +84,15 @@ function CreatePage(): ReactElement {
       }
     }
     case 2: {
-      return <SetLocationOnMapComponent onSubmit={onSubmit} />;
+      return (
+        <>
+          <SetLocationOnMapComponent onSubmit={onSubmit} />
+          {isLoading && <LoadingOverlay message="Posting..." />}
+          {apiError && (
+            <ErrorComponent error={apiError} setError={setApiError} />
+          )}
+        </>
+      );
     }
     default: {
       return (

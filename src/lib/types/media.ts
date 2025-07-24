@@ -1,9 +1,4 @@
 export type AcceptedMediaType =
-  | "image/png"
-  | "image/jpeg"
-  | "image/jpg"
-  | "image/gif"
-  | "image/webp"
   | "video/mp4"
   | "video/mkv"
   | "video/webm"

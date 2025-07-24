@@ -1,14 +1,67 @@
+import { FindAddress } from "@/lib/services/address-service";
+import type { Address } from "@/lib/types/address";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { ReviewContentProps } from "@/lib/types/props/review-content-props";
-import { use, useEffect, useState, type ReactElement } from "react";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
 import { RotateCcwIcon } from "lucide-react";
-import { Label } from "./ui/label";
+import {
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type ReactElement,
+} from "react";
+import LoadingOverlay from "./loading-overlay";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import ErrorComponent from "./error";
 
 function ReviewContentComponent(props: ReviewContentProps): ReactElement {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const [description, setDescription] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [address, setAddress] = useState<Address>({
+    state: "",
+    city: "",
+  });
+  const [apiError, setApiError] = useState<ProblemDetail>();
+  // Fetches user's location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            setIsLoading(true);
+            const response = await FindAddress(position);
+            setAddress(response);
+          } catch (error: any) {
+            error = error as ProblemDetail;
+            setApiError(error);
+          } finally {
+            setIsLoading(false);
+          }
+        },
+        (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              alert("Cannot fetch nearby posts without location permission.");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              alert(
+                "Your location is not available at the moment. Please try again later."
+              );
+              break;
+            case error.TIMEOUT:
+              alert("Location request timed out. Please try again.");
+              break;
+            default:
+              alert(
+                "Something went wrong during fetching your location. Please refresh the page. If the error persists, try again later."
+              );
+              break;
+          }
+        }
+      );
+    }
+  }, []);
   // Loads video file for preview
   useEffect(() => {
     if (props.blob) {
@@ -29,45 +82,66 @@ function ReviewContentComponent(props: ReviewContentProps): ReactElement {
     }
   }, [props.blob]);
 
-  // On the basis of user's location, find the address details
-  useEffect(() => {}, []);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setAddress((prev) => ({ ...prev, [name]: value }));
+  };
   if (!dataUrl) {
-    return <div>Loading...</div>;
+    return <LoadingOverlay message="Loading..." />;
   } else {
     return (
-      <div className="h-full flex flex-col space-y-4 items-center">
+      <div className="h-full flex flex-col items-center">
         <video
           controls={true}
           autoPlay={true}
           loop={true}
-          className="basis-3/4 object-cover"
+          className="grow object-cover"
           src={dataUrl}
         />
-        <form className="grow flex flex-col w-full px-2 space-y-4">
+        <form
+          className="basis-1/4 flex flex-col w-full px-2 space-y-4"
+          onSubmit={() => props.onAddAddress(address)}
+        >
           <div className="flex-col space-y-1">
             <Label htmlFor="state" className="text-lg font-semibold">
               State
             </Label>
-            <Input id="state" name="state" type="text" />
+            <Input
+              id="state"
+              name="state"
+              type="text"
+              value={address.state}
+              onChange={handleChange}
+            />
           </div>
           <div className="flex-col space-y-1">
             <Label htmlFor="city" className="text-lg font-semibold">
               City / Town / Village
             </Label>
-            <Input id="city" name="city" type="text" />
+            <Input
+              id="city"
+              name="city"
+              type="text"
+              value={address.city}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-row justify-between space-x-1">
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={props.onRetake}
+              type="reset"
+            >
+              <RotateCcwIcon />
+            </Button>
+            <Button className="grow rounded-3xl" type="submit">
+              Next
+            </Button>
           </div>
         </form>
-        <div className="flex flex-row justify-between items-center space-x-2 px-2 w-full">
-          <Button variant="secondary" size="icon" onClick={props.onRetake}>
-            <RotateCcwIcon />
-          </Button>
-          <Button
-            className="grow rounded-3xl"
-            onClick={() => props.onAddDescription(description)}
-          >
-            Next
-          </Button>
-        </div>
+        {isLoading && <LoadingOverlay message="Finding your addres..." />}
+        {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
       </div>
     );
   }
