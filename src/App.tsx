@@ -10,6 +10,7 @@ import HomePage from "./pages/home";
 import ProfilePage from "./pages/profile";
 import SigninPage from "./pages/signin";
 import SignUpPage from "./pages/signup";
+import CommentPage from "./pages/comment";
 function App() {
   const accessTokenContextHandler = useAccessTokenContextHandler();
   useEffect(() => {
@@ -30,6 +31,10 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/sign-in" element={<SigninPage />} />
                 <Route path="/sign-up" element={<SignUpPage />} />
+                <Route
+                  path="/post/:postId/comments"
+                  element={<CommentPage />}
+                />
               </Routes>
             </main>
             <footer className="fixed bottom-0">

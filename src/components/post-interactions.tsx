@@ -27,7 +27,7 @@ function PostInteractionsComponent(props: PostInteractionProps) {
   const [apiError, setApiError] = useState<ProblemDetail>();
   const toggleIsHearted = async () => {
     if (accessTokenObject === null) {
-      navigate("/");
+      navigate("/sign-in");
     } else {
       const currentHeartCount = hearted.isHearted
         ? hearted.heartCount - 1
@@ -48,15 +48,13 @@ function PostInteractionsComponent(props: PostInteractionProps) {
       }
     }
   };
+  const navigateToComment = () => {
+    navigate(`/post/${props.postId}/comments`);
+  };
   return (
     <div className="absolute right-2 bottom-20 flex flex-col gap-y-6 z-10">
       <div className="flex flex-col items-center gap-y-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleIsHearted}
-          disabled={accessTokenObject === null}
-        >
+        <Button variant="ghost" size="icon" onClick={toggleIsHearted}>
           {hearted.isHearted ? (
             <HeartIcon
               fill="oklch(0.705 0.213 47.604)"
@@ -70,7 +68,7 @@ function PostInteractionsComponent(props: PostInteractionProps) {
         <div>{hearted.heartCount}</div>
       </div>
       <div className="flex flex-col items-center gap-y-2">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" onClick={navigateToComment}>
           <MessageCircleIcon className="size-10" />
         </Button>
         <div>{props.commentCount}</div>

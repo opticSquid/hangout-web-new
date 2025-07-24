@@ -113,13 +113,15 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
             loop
             className="aspect-9/16 object-cover w-full"
           />
-          <PostInteractionsComponent
-            postId={props.postId}
-            heartCount={props.postInteractions.hearts}
-            commentCount={props.postInteractions.comments}
-            distance={props.postInteractions.distance}
-            location={props.postInteractions.location}
-          />
+          {props.showInteractions && (
+            <PostInteractionsComponent
+              postId={props.postId}
+              heartCount={props.postInteractions.hearts}
+              commentCount={props.postInteractions.comments}
+              distance={props.postInteractions.distance}
+              location={props.postInteractions.location}
+            />
+          )}
         </>
       )}
     </div>

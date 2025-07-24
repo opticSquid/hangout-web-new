@@ -1,8 +1,8 @@
 import { AxiosHeaders, isAxiosError } from "axios";
 import type { CustomAxiosRequestConfig } from "../types/custom-axios-request";
-import type { FetchPostsQueryParams, PostList } from "../types/post";
-import axiosInstance from "../utils/axios-instance";
 import type { ProblemDetail } from "../types/model/problem-detail";
+import type { FetchPostsQueryParams, Post, PostList } from "../types/post";
+import axiosInstance from "../utils/axios-instance";
 
 export async function FetchPosts(
   queryParams: FetchPostsQueryParams
@@ -19,6 +19,28 @@ export async function FetchPosts(
       rqConfig
     );
     return response.data as PostList;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      if (error.response && error.response.data) {
+        throw error.response.data as ProblemDetail;
+      }
+    }
+    throw error;
+  }
+}
+
+export async function FetchPostById(postId: string): Promise<Post> {
+  try {
+    const rqConfig: CustomAxiosRequestConfig = {
+      skipAuth: true,
+      headers: new AxiosHeaders({ accept: "application/json" }),
+      withCredentials: false,
+    };
+    const response = await axiosInstance.get(
+      `/post-api/v1/post/${postId}`,
+      rqConfig
+    );
+    return response.data as Post;
   } catch (error) {
     if (isAxiosError(error)) {
       if (error.response && error.response.data) {

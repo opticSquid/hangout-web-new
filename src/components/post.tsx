@@ -11,6 +11,7 @@ function PostComponent(props: PostComponentProps): ReactElement {
         postId={props.post.postId}
         filename={props.post.filename}
         hostURL={`${import.meta.env.VITE_API_BASE_URL}/processed`}
+        showInteractions={true}
         autoPlay={props.canPlayVideo}
         postInteractions={{
           hearts: props.post.hearts,
