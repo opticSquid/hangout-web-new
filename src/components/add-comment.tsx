@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
-import { AddComment } from "@/lib/services/comment-service";
+import { AddComment, AddReply } from "@/lib/services/comment-service";
 
 function AddCommentComponent(props: AddCommentProps): ReactElement {
   const [comment, setComment] = useState("");
@@ -33,17 +33,32 @@ function AddCommentComponent(props: AddCommentProps): ReactElement {
   async function onSubmit() {
     setIsLoading(true);
     try {
-      const response = await AddComment({
-        postId: props.postId,
-        comment: comment,
-      });
-      props.appendComment({
-        commentId: response.commentId,
-        createdAt: new Date().toUTCString(),
-        text: comment,
-        userId: 2,
-        replyCount: 0,
-      });
+      if (props.type === "comment") {
+        const response = await AddComment({
+          postId: props.postId,
+          comment: comment,
+        });
+        props.appendComment({
+          commentId: response.commentId,
+          createdAt: new Date().toUTCString(),
+          text: comment,
+          userId: 2,
+          replyCount: 0,
+        });
+      } else {
+        const response = await AddReply({
+          postId: props.postId,
+          parentCommentId: props.parentCommentId,
+          comment: comment,
+        });
+        props.appendComment({
+          commentId: response.commentId,
+          createdAt: new Date().toUTCString(),
+          text: comment,
+          userId: 2,
+          replyCount: 0,
+        });
+      }
     } catch (error) {
       console.error("Error submitting comment:", error);
     } finally {

@@ -12,6 +12,7 @@ import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { Post } from "@/lib/types/post";
 import { useEffect, useState, type ReactElement } from "react";
 import { useParams } from "react-router";
+
 function ReplyPage(): ReactElement {
   const { postId, commentId } = useParams<{
     postId: string;
@@ -84,15 +85,15 @@ function ReplyPage(): ReactElement {
           }}
         />
       </div>
-      <div className="h-2/5">
+      <div className="h-2/5 flex flex-col">
         {postId && commentId && commentDetails && (
           <CommentComponent
             comment={commentDetails}
             postId={postId}
-            className="bg-secondary rounded-b-sm"
+            // className="bg-secondary rounded-b-sm"
           />
         )}
-        <div className="overflow-y-scroll grow">
+        <div className="ml-4 overflow-y-scroll grow">
           {replies.map((reply) => {
             if (postId !== undefined) {
               return (
@@ -100,18 +101,20 @@ function ReplyPage(): ReactElement {
                   comment={reply}
                   postId={postId}
                   key={reply.commentId}
+                  showReplyButton={true}
                 />
               );
             }
           })}
         </div>
-        {/* {postId && commentId && (
+        {postId && commentId && (
           <AddCommentComponent
             type="reply"
             postId={postId}
+            parentCommentId={commentId}
             appendComment={appendReply}
           />
-        )} */}
+        )}
       </div>
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </>

@@ -1,7 +1,6 @@
 export type NewComment = {
   type: "comment" | "reply";
   postId: string;
-  revalidateCommentAction: () => void;
   parentCommentId?: string;
 };
 export type NewCommentRq = {

@@ -91,3 +91,21 @@ export async function FetchAllReplies(commentId: string): Promise<Comment[]> {
     throw error;
   }
 }
+
+export async function AddReply(replyRq: NewCommentRq): Promise<NewCommentRs> {
+  try {
+    const response = await axiosInstance.post(
+      "/post-api/v1/comment/reply",
+      replyRq,
+      { withCredentials: true }
+    );
+    return response.data as NewCommentRs;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      if (error.response && error.response.data) {
+        throw error.response.data as ProblemDetail;
+      }
+    }
+    throw error;
+  }
+}

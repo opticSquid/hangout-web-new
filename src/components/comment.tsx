@@ -31,7 +31,9 @@ function CommentComponent(props: CommentProps): ReactElement {
           <div className="text-lg">{props.comment.text}</div>
           {props.showReplyButton && (
             <div className="flex flex-row items-center">
-              <Link to={`reply/${props.comment.commentId}`}>
+              <Link
+                to={`/post/${props.postId}/comments/reply/${props.comment.commentId}`}
+              >
                 <Button
                   variant="ghost"
                   size="sm"
@@ -42,7 +44,7 @@ function CommentComponent(props: CommentProps): ReactElement {
                 </Button>
               </Link>
               {props.comment.replyCount > 0 && (
-                <div className="text-primaryButton">
+                <div className="text-primary font-bold">
                   {props.comment.replyCount}&nbsp;
                   {props.comment.replyCount > 1 ? "replies" : "reply"}
                 </div>
@@ -51,6 +53,7 @@ function CommentComponent(props: CommentProps): ReactElement {
           )}
         </div>
       </div>
+
       <hr className="ml-2 mr-2 bg-gray-400 dark:bg-slate-800" />
     </>
   );
