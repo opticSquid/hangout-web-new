@@ -2,7 +2,7 @@ import ErrorComponent from "@/components/error";
 import LoadingOverlay from "@/components/loading-overlay";
 import PostComponent from "@/components/post";
 import { LoadNPosts, SavePostsToDB } from "@/lib/db/index-db";
-import { FetchPosts } from "@/lib/services/fetch-posts";
+import { FetchPosts } from "@/lib/services/post-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 import type {

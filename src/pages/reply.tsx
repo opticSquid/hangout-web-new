@@ -2,21 +2,28 @@ import AddCommentComponent from "@/components/add-comment";
 import CommentComponent from "@/components/comment";
 import ErrorComponent from "@/components/error";
 import VideoPlayer from "@/components/video-player";
-import { FetchAllTopLevelComments } from "@/lib/services/comment-service";
+import {
+  FetchAllReplies,
+  FetchCommentById,
+} from "@/lib/services/comment-service";
 import { FetchPostById } from "@/lib/services/post-service";
 import type { Comment } from "@/lib/types/comment";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { Post } from "@/lib/types/post";
 import { useEffect, useState, type ReactElement } from "react";
 import { useParams } from "react-router";
-
-function CommentPage(): ReactElement {
-  const postId = useParams<{ postId: string }>().postId;
+function ReplyPage(): ReactElement {
+  const { postId, commentId } = useParams<{
+    postId: string;
+    commentId: string;
+  }>();
   const [postDetails, setPostDetails] = useState<Post>();
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentDetails, setCommentDetails] = useState<Comment>();
+  const [replies, setReplies] = useState<Comment[]>([]);
   const [apiError, setApiError] = useState<ProblemDetail>();
+
   useEffect(() => {
-    if (postId !== undefined) {
+    if (postId !== undefined && commentId !== undefined) {
       const fetchPost = async () => {
         try {
           const post = await FetchPostById(postId);
@@ -26,26 +33,35 @@ function CommentPage(): ReactElement {
           setApiError(error);
         }
       };
-      const fetchComments = async () => {
+      const fetchComment = async () => {
         try {
-          const comments = await FetchAllTopLevelComments(postId);
-          // Sort comments by createdAt in descending order
-          comments.sort((a, b) => {
-            return (
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
-          });
-          setComments(comments);
+          const comment = await FetchCommentById(commentId);
+          setCommentDetails(comment);
         } catch (error: any) {
           error = error as ProblemDetail;
           setApiError(error);
         }
       };
-      Promise.all([fetchPost(), fetchComments()]);
+      const fetchReplies = async () => {
+        try {
+          const replies = await FetchAllReplies(commentId);
+          // Sort comments by createdAt in descending order
+          replies.sort((a, b) => {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          });
+          setReplies(replies);
+        } catch (error: any) {
+          error = error as ProblemDetail;
+          setApiError(error);
+        }
+      };
+      Promise.all([fetchPost(), fetchComment(), fetchReplies()]);
     }
-  }, [postId]);
-  const appendComment = (comment: Comment) => {
-    setComments((prevComments) => [comment, ...prevComments]);
+  }, [postId, commentId]);
+  const appendReply = (reply: Comment) => {
+    setReplies((prevReplies) => [reply, ...prevReplies]);
   };
   return postDetails !== undefined ? (
     <>
@@ -68,28 +84,34 @@ function CommentPage(): ReactElement {
           }}
         />
       </div>
-      <div className="h-2/5 flex flex-col">
+      <div className="h-2/5">
+        {postId && commentId && commentDetails && (
+          <CommentComponent
+            comment={commentDetails}
+            postId={postId}
+            className="bg-secondary rounded-b-sm"
+          />
+        )}
         <div className="overflow-y-scroll grow">
-          {comments.map((comment) => {
+          {replies.map((reply) => {
             if (postId !== undefined) {
               return (
                 <CommentComponent
-                  comment={comment}
+                  comment={reply}
                   postId={postId}
-                  showReplyButton={true}
-                  key={comment.commentId}
+                  key={reply.commentId}
                 />
               );
             }
           })}
         </div>
-        {postId && (
+        {/* {postId && commentId && (
           <AddCommentComponent
-            type="comment"
+            type="reply"
             postId={postId}
-            appendComment={appendComment}
+            appendComment={appendReply}
           />
-        )}
+        )} */}
       </div>
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </>
@@ -97,5 +119,4 @@ function CommentPage(): ReactElement {
     <div>no post</div>
   );
 }
-
-export default CommentPage;
+export default ReplyPage;
