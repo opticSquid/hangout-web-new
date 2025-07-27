@@ -23,7 +23,7 @@ function App() {
   return (
     <ThemeProvider>
       <DeviceDetailsProvider>
-        <div className="h-screen w-screen md:w-3/4 lg:w-1/4 mx-auto bg-background">
+        <div className="h-screen w-screen md:w-3/4 lg:w-1/4 mx-auto bg-background md:shadow-xl/40 shadow-foreground">
           <BrowserRouter>
             <main className="h-16/17">
               <Routes>
