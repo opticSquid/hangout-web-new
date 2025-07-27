@@ -39,8 +39,8 @@ function AddCommentComponent(props: AddCommentProps): ReactElement {
       : undefined;
 
   async function onSubmit() {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       if (props.type === "comment") {
         const response = await AddComment({
           postId: props.postId,
@@ -68,7 +68,8 @@ function AddCommentComponent(props: AddCommentProps): ReactElement {
         });
       }
     } catch (error) {
-      console.error("Error submitting comment:", error);
+      const err = error as ProblemDetail;
+      setApiError(err);
     } finally {
       setIsLoading(false);
     }

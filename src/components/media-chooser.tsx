@@ -8,8 +8,10 @@ import { useEffect, useRef, useState, type ReactElement } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import type { ShootMediaProps } from "@/lib/types/props/choose-media-props";
+import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
 
 function MediaChooserComponent(props: ShootMediaProps): ReactElement {
+  const accessTokenContextObject = useAccessTokenContextObject();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -199,16 +201,27 @@ function MediaChooserComponent(props: ShootMediaProps): ReactElement {
           accept="image/*,video/*"
           style={{ display: "none" }}
           onChange={handleFileUpload}
+          disabled={accessTokenContextObject.accessToken === null}
         />
         {isRecording ? (
-          <Button onClick={stopRecording} variant="ghost" size="icon">
+          <Button
+            onClick={stopRecording}
+            variant="ghost"
+            size="icon"
+            disabled={accessTokenContextObject.accessToken === null}
+          >
             <CircleStopIcon
               className="size-10"
               stroke="oklch(0.705 0.213 47.604)"
             />
           </Button>
         ) : (
-          <Button onClick={startRecording} variant="ghost" size="icon">
+          <Button
+            onClick={startRecording}
+            variant="ghost"
+            size="icon"
+            disabled={accessTokenContextObject.accessToken === null}
+          >
             <CircleIcon
               className="size-10"
               fill="oklch(0.705 0.213 47.604)"

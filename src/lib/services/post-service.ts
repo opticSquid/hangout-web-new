@@ -82,7 +82,6 @@ export async function FetchOwnPostsData(
 ): Promise<ProfilePostList> {
   try {
     const rqConfig: CustomAxiosRequestConfig = {
-      skipAuth: true,
       headers: new AxiosHeaders({ accept: "application/json" }),
       withCredentials: false,
     };

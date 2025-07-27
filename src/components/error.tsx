@@ -18,7 +18,9 @@ function ErrorComponent(props: ErrorComponentProps): ReactElement {
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{props.error?.title}</AlertDialogTitle>
+          <AlertDialogTitle>
+            {props.error ? props.error.title : "Error Occurred"}
+          </AlertDialogTitle>
           <AlertDialogDescription>{props.error?.detail}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

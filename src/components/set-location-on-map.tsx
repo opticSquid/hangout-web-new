@@ -6,8 +6,10 @@ import { useNavigate } from "react-router";
 import MapComponent from "./map";
 import "./stylesheets/map.css";
 import { Button } from "./ui/button";
+import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
 function SetLocationOnMapComponent(props: AddLocationProps) {
   const navigate = useNavigate();
+  const accessTokenObject = useAccessTokenContextObject();
   const [position, setPosition] = useState<Position>({
     lat: 0,
     lng: 0,
@@ -77,7 +79,7 @@ function SetLocationOnMapComponent(props: AddLocationProps) {
           <Button
             className="grow rounded-3xl"
             onClick={doPost}
-            disabled={loading}
+            disabled={loading == true || accessTokenObject.accessToken === null}
           >
             Post
             {loading && (

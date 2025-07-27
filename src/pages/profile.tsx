@@ -4,7 +4,7 @@ import PostComponent from "@/components/post";
 import ProfileHeaderComponent from "@/components/profile-header";
 import { Button } from "@/components/ui/button";
 import { LoadNPosts, SavePostsToDB } from "@/lib/db/my-posts-db";
-import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { FetchOwnPostsData } from "@/lib/services/post-service";
 import { FetchOwnProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
@@ -14,7 +14,7 @@ import { Grid3X3Icon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 
 function ProfilePage(): ReactElement {
-  const accessTokenObject = useAccessTokenContextObject();
+  const isLoggedIn = useAuthGuard();
   const [loadData, setLoadData] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [profileData, setProfileData] = useState<Profile>();
@@ -134,7 +134,7 @@ function ProfilePage(): ReactElement {
     return () => postElements.forEach((el) => observer.unobserve(el));
   }, [postToTriggerDataLoad]);
 
-  return accessTokenObject.accessToken !== null && profileData !== undefined ? (
+  return isLoggedIn && profileData !== undefined ? (
     <div className="flex flex-col h-full">
       <ProfileHeaderComponent
         profilePictureBaseUrl={`${

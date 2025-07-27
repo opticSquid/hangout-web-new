@@ -14,8 +14,10 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import ErrorComponent from "./error";
+import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
 
 function ReviewContentComponent(props: ReviewContentProps): ReactElement {
+  const accessTokenContextObject = useAccessTokenContextObject();
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [address, setAddress] = useState<Address>({
@@ -135,7 +137,13 @@ function ReviewContentComponent(props: ReviewContentProps): ReactElement {
             >
               <RotateCcwIcon />
             </Button>
-            <Button className="grow rounded-3xl" type="submit">
+            <Button
+              className="grow rounded-3xl"
+              type="submit"
+              disabled={
+                isLoading || accessTokenContextObject.accessToken === null
+              }
+            >
               Next
             </Button>
           </div>

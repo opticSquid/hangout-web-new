@@ -54,7 +54,12 @@ function PostInteractionsComponent(props: PostInteractionProps) {
   return (
     <div className="absolute right-2 bottom-20 flex flex-col gap-y-6 z-10">
       <div className="flex flex-col items-center gap-y-2">
-        <Button variant="ghost" size="icon" onClick={toggleIsHearted}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleIsHearted}
+          disabled={accessTokenObject.accessToken === null}
+        >
           {hearted.isHearted ? (
             <HeartIcon
               fill="oklch(0.705 0.213 47.604)"

@@ -2,6 +2,7 @@ import AddCommentComponent from "@/components/add-comment";
 import CommentComponent from "@/components/comment";
 import ErrorComponent from "@/components/error";
 import PostComponent from "@/components/post";
+import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
 import { FetchAllTopLevelComments } from "@/lib/services/comment-service";
 import { FetchPostById } from "@/lib/services/post-service";
 import type { Comment } from "@/lib/types/comment";
@@ -12,6 +13,7 @@ import { useParams } from "react-router";
 
 function CommentPage(): ReactElement {
   const postId = useParams<{ postId: string }>().postId;
+  const accessTokenObject = useAccessTokenContextObject();
   const [postDetails, setPostDetails] = useState<Post>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [apiError, setApiError] = useState<ProblemDetail>();
@@ -72,7 +74,7 @@ function CommentPage(): ReactElement {
             }
           })}
         </div>
-        {postId && (
+        {postId && accessTokenObject.accessToken !== null && (
           <AddCommentComponent
             type="comment"
             postId={postId}
