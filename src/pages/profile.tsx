@@ -3,59 +3,82 @@ import LoadingOverlay from "@/components/loading-overlay";
 import PostComponent from "@/components/post";
 import ProfileHeaderComponent from "@/components/profile-header";
 import { Button } from "@/components/ui/button";
+import { LoadNPosts, SavePostsToDB } from "@/lib/db/my-posts-db";
 import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
 import { FetchOwnPostsData } from "@/lib/services/post-service";
 import { FetchOwnProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
-import type { Post } from "@/lib/types/post";
+import type { PagePointer, ProfilePost } from "@/lib/types/post";
 import type { Profile } from "@/lib/types/profile";
 import { Grid3X3Icon } from "lucide-react";
-import { useEffect, useMemo, useState, type ReactElement } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 
 function ProfilePage(): ReactElement {
   const accessTokenObject = useAccessTokenContextObject();
+  const [loadData, setLoadData] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [profileData, setProfileData] = useState<Profile>();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const pageNumber = useRef<number>(1);
+  const [posts, setPosts] = useState<ProfilePost[]>([]);
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
   const [apiError, setApiError] = useState<ProblemDetail>();
+  const limit: number = 3;
+  const offset = useRef<number>(0);
 
   /**
-   * Fetches the user's profile and posts data when the component mounts.
+   * Fetches the user's profile data when the component mounts.
    */
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setIsLoading(true);
         const response = await FetchOwnProfileData();
         setProfileData(response);
       } catch (error: any) {
         error = error as ProblemDetail;
         setApiError(error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    const fetchPosts = async () => {
-      try {
-        const response = await FetchOwnPostsData();
-        setPosts(response);
-      } catch (error: any) {
-        error = error as ProblemDetail;
-        setApiError(error);
-      }
-    };
-
-    // set isLoading to true before running Promise.all and reset it to false after both promises resolve
-    setIsLoading(true);
-    Promise.all([fetchProfile(), fetchPosts()]).finally(() =>
-      setIsLoading(false)
-    );
+    fetchProfile();
   }, []);
 
-  const profilePictureUrl =
-    profileData != undefined
-      ? `${import.meta.env.VITE_API_BASE_URL}/profile-photos/${
-          profileData.profilePicture.filename
-        }`
-      : undefined;
+  const changePageNumber = (pagePointer: PagePointer) => {
+    if (pagePointer.currentPage < pagePointer.totalPages) {
+      pageNumber.current++;
+    }
+  };
+
+  /**
+   * Fetches the user's posts data when the component mounts and when the page number changes.
+   * It also saves the posts to the database and loads them from the database.
+   */
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await FetchOwnPostsData(pageNumber.current);
+        await SavePostsToDB(response.posts);
+        changePageNumber({
+          currentPage: response.currentPage,
+          totalPages: response.totalPages,
+        });
+        const nextPosts = await LoadNPosts(offset.current, limit);
+        setPosts((prevState) => [...prevState, ...nextPosts]);
+        offset.current = offset.current + nextPosts.length;
+      } catch (error: any) {
+        const err = error as ProblemDetail;
+        setApiError(err);
+      }
+    };
+    if (loadData === true) {
+      setIsLoading(true);
+      fetchPosts().finally(() => {
+        setIsLoading(false);
+        setLoadData(false);
+      });
+    }
+  }, [loadData]);
 
   /**
    * Calculates the 5th last element of the list. When that elment becomes visible it triggers additional data load
@@ -69,6 +92,27 @@ function ProfilePage(): ReactElement {
       return undefined;
     }
   }, [posts]);
+
+  /**
+   * Watches the 5th last element of the list. when that is visible, starts to load additional posts in background
+   */
+  useEffect(() => {
+    const postElements = document.querySelectorAll(".post-container");
+    if (postToTriggerDataLoad !== undefined && postElements.length > 0) {
+      const triggerElement = postElements[postToTriggerDataLoad];
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setLoadData(true);
+          }
+        },
+        { threshold: 0.5 }
+      );
+
+      if (triggerElement) observer.observe(triggerElement);
+      return () => observer.unobserve(triggerElement);
+    }
+  }, [postToTriggerDataLoad]);
 
   /**
    * autoplays the currently visible video and pauses others
@@ -93,7 +137,9 @@ function ProfilePage(): ReactElement {
   return accessTokenObject.accessToken !== null && profileData !== undefined ? (
     <div className="flex flex-col h-full">
       <ProfileHeaderComponent
-        profilePictureBaseUrl={profilePictureUrl}
+        profilePictureBaseUrl={`${
+          import.meta.env.VITE_API_BASE_URL
+        }/profile-photos/${profileData.profilePicture.filename}`}
         name={profileData.name}
       />
       <div className="flex flex-row border-t border-b justify-center">
@@ -103,17 +149,31 @@ function ProfilePage(): ReactElement {
         </Button>
       </div>
       <section className="overflow-y-auto scroll-smooth snap-y snap-mandatory">
-        {posts.map((post) => (
-          <PostComponent
-            key={post.postId}
-            post={post}
-            canPlayVideo={post.postId === visiblePostId}
-            showDistance={false}
-            twHeightClassName="h-full"
-          />
-        ))}
+        {posts
+          .filter((post) => post.processStatus === "SUCCESS")
+          .map((post) => (
+            <PostComponent
+              key={post.postId}
+              post={{
+                city: post.city,
+                comments: post.comments,
+                createdAt: post.createdAt,
+                distance: -1,
+                postId: post.postId,
+                filename: post.filename,
+                hearts: post.hearts,
+                interactions: post.interactions,
+                location: post.location,
+                ownerId: profileData.userId,
+                state: post.state,
+              }}
+              canPlayVideo={post.postId === visiblePostId}
+              showDistance={false}
+              twHeightClassName="h-full"
+            />
+          ))}
       </section>
-      {isLoading && <LoadingOverlay message="Loading profile..." />}
+      {isLoading && <LoadingOverlay message="Loading Profile..." />}
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </div>
   ) : (

@@ -1,7 +1,7 @@
 import ErrorComponent from "@/components/error";
 import LoadingOverlay from "@/components/loading-overlay";
 import PostComponent from "@/components/post";
-import { LoadNPosts, SavePostsToDB } from "@/lib/db/index-db";
+import { LoadNPosts, SavePostsToDB } from "@/lib/db/all-posts-db";
 import { FetchPosts } from "@/lib/services/post-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
@@ -83,10 +83,10 @@ function HomePage(): ReactElement {
         try {
           setIsLoading(true);
           const data: PostList = await FetchPosts({
-            // lat: userLocation.coords.latitude,
-            // lon: userLocation.coords.longitude,
-            lat: 22.56753960682342,
-            lon: 88.47390058400923,
+            lat: userLocation.coords.latitude,
+            lon: userLocation.coords.longitude,
+            // lat: 22.56753960682342,
+            // lon: 88.47390058400923,
             minSearchRadius: searchParams.current.minSearchRadius,
             maxSearchRadius: searchParams.current.maxSearchRadius,
             pageNumber: searchParams.current.pageNumber,
@@ -97,9 +97,8 @@ function HomePage(): ReactElement {
           });
           await SavePostsToDB(data.posts);
           const nextPosts = await LoadNPosts(offset.current, limit);
-          // const postList =
-          //   posts.length > 0 ? posts.concat(nextPosts) : nextPosts;
           setPosts((prevState) => [...prevState, ...nextPosts]);
+          console.log(posts);
           offset.current = offset.current + nextPosts.length;
         } catch (error: any) {
           const problem = error as ProblemDetail;

@@ -4,7 +4,7 @@ type ProfilePicture = {
 };
 export type Profile = {
   profileId: string;
-  userId: string;
+  userId: number;
   name: string;
   profilePicture: ProfilePicture;
 };

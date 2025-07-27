@@ -6,6 +6,7 @@ import type {
   NewPostRs,
   Post,
   PostList,
+  ProfilePostList,
 } from "../types/post";
 import axiosInstance from "../utils/axios-instance";
 
@@ -76,7 +77,9 @@ export async function AddPost(formData: FormData): Promise<NewPostRs> {
   }
 }
 
-export async function FetchOwnPostsData(): Promise<Post[]> {
+export async function FetchOwnPostsData(
+  pageNumber: number
+): Promise<ProfilePostList> {
   try {
     const rqConfig: CustomAxiosRequestConfig = {
       skipAuth: true,
@@ -84,10 +87,10 @@ export async function FetchOwnPostsData(): Promise<Post[]> {
       withCredentials: false,
     };
     const response = await axiosInstance.get(
-      "/post-api/v1/post/my-posts",
+      `/post-api/v1/post/my-posts?pageNumber=${pageNumber}`,
       rqConfig
     );
-    return response.data as Post[];
+    return response.data as ProfilePostList;
   } catch (error) {
     if (isAxiosError(error)) {
       if (error.response && error.response.data) {

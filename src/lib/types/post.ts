@@ -19,8 +19,6 @@ type PostContent = {
   postId: string;
   ownerId: number;
   filename: string;
-  contentType: string;
-  postDescription?: string;
   createdAt: string;
   state: string;
   city: string;
@@ -63,3 +61,20 @@ export type HeartSchema = {
 export type NewPostRs = {
   postId: string;
 };
+
+export type ProfilePost = {
+  processStatus: "IN_QUEUE" | "PROCESSING" | "SUCCESS" | "FAIL";
+  interactions: number;
+  hearts: number;
+  comments: number;
+  city: string;
+  postId: string;
+  createdAt: string;
+  filename: string;
+  location: Location;
+  state: string;
+};
+
+export type ProfilePostList = {
+  posts: ProfilePost[];
+} & PagePointer;
