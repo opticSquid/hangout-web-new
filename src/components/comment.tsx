@@ -57,10 +57,10 @@ function CommentComponent(props: CommentProps): ReactElement {
           </div>
           <div className="text-lg">{props.comment.text}</div>
           {props.showReplyButton && (
-            <div className="flex flex-row items-center">
-              <Link
-                to={`/post/${props.postId}/comments/reply/${props.comment.commentId}`}
-              >
+            <Link
+              to={`/post/${props.postId}/comments/reply/${props.comment.commentId}`}
+            >
+              <div className="flex flex-row items-center">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -69,14 +69,14 @@ function CommentComponent(props: CommentProps): ReactElement {
                   <MessageSquareReplyIcon size={18} />
                   &nbsp;reply
                 </Button>
-              </Link>
-              {props.comment.replyCount > 0 && (
-                <div className="text-primary font-bold">
-                  {props.comment.replyCount}&nbsp;
-                  {props.comment.replyCount > 1 ? "replies" : "reply"}
-                </div>
-              )}
-            </div>
+                {props.comment.replyCount > 0 && (
+                  <div className="text-primary font-bold">
+                    {props.comment.replyCount}&nbsp;
+                    {props.comment.replyCount > 1 ? "replies" : "reply"}
+                  </div>
+                )}
+              </div>
+            </Link>
           )}
         </div>
       </div>

@@ -93,7 +93,7 @@ function AddCommentComponent(props: AddCommentProps): ReactElement {
         variant="ghost"
         size="icon"
         onClick={onSubmit}
-        disabled={isLoading}
+        disabled={isLoading == true}
       >
         <SendHorizonalIcon className="size-6" />
       </Button>

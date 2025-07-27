@@ -1,7 +1,7 @@
 import AddCommentComponent from "@/components/add-comment";
 import CommentComponent from "@/components/comment";
 import ErrorComponent from "@/components/error";
-import VideoPlayer from "@/components/video-player";
+import PostComponent from "@/components/post";
 import {
   FetchAllReplies,
   FetchCommentById,
@@ -66,25 +66,12 @@ function ReplyPage(): ReactElement {
   };
   return postDetails !== undefined ? (
     <>
-      <div
-        className="snap-start snap-always h-3/5 post-container"
-        post-id={postDetails.postId}
-      >
-        <VideoPlayer
-          postId={postDetails.postId}
-          filename={postDetails.filename}
-          hostURL={`${import.meta.env.VITE_API_BASE_URL}/processed`}
-          autoPlay={true}
-          showDistance={false}
-          postInteractions={{
-            hearts: postDetails.hearts,
-            comments: postDetails.comments,
-            distance: postDetails.distance,
-            interactions: postDetails.interactions,
-            location: postDetails.location,
-          }}
-        />
-      </div>
+      <PostComponent
+        post={postDetails}
+        canPlayVideo={true}
+        showDistance={false}
+        twHeightClassName="h-3/5"
+      />
       <div className="h-2/5 flex flex-col">
         {postId && commentId && commentDetails && (
           <CommentComponent
