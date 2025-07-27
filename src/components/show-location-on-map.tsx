@@ -24,7 +24,7 @@ function ShowLocationOnMapComponent(
       open={props.isOpen}
       onOpenChange={() => props.setIsOpen(!props.isOpen)}
     >
-      <DialogContent className="w-4/5 h-3/4 gap-y-4 px-0 py-2">
+      <DialogContent className="w-4/5 lg:w-1/5 h-3/4 gap-y-4 px-0 py-2">
         <DialogHeader>
           <DialogTitle className="px-2">Location</DialogTitle>
           <DialogDescription className="hidden">

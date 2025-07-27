@@ -186,7 +186,7 @@ function MediaChooserComponent(props: ShootMediaProps): ReactElement {
         className="h-full object-cover"
       />
       <canvas ref={canvasRef} className="hidden" />
-      <div className="absolute bottom-14 w-full h-1/12 flex flex-row justify-between items-center px-14">
+      <div className="absolute bottom-14 w-full md:w-3/4 lg:w-1/4 h-1/12  flex flex-row justify-between items-center px-14">
         <Button
           variant="ghost"
           size="icon"

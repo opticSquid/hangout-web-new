@@ -148,7 +148,7 @@ function ProfilePage(): ReactElement {
           &nbsp;POSTS
         </Button>
       </div>
-      <section className="overflow-y-auto scroll-smooth snap-y snap-mandatory">
+      <section className="overflow-y-auto scrollbar-hide scroll-smooth snap-y snap-mandatory">
         {posts
           .filter((post) => post.processStatus === "SUCCESS")
           .map((post) => (

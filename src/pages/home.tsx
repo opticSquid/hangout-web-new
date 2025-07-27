@@ -171,7 +171,7 @@ function HomePage(): ReactElement {
 
   return (
     <>
-      <section className="h-full overflow-y-auto scroll-smooth snap-y snap-mandatory">
+      <section className="h-full overflow-y-auto scrollbar-hide scroll-smooth snap-y snap-mandatory">
         {posts.length !== 0 ? (
           posts.map((post: Post) => (
             <PostComponent

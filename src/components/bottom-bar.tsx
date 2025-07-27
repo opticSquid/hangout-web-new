@@ -11,7 +11,7 @@ import { Button } from "./ui/button";
 function BottomBarComponent(): ReactElement {
   const navigation = useLocation();
   return (
-    <div className="z-20 w-screen flex flex-row justify-between items-center px-1 bg-background">
+    <div className="z-20 flex flex-row justify-between items-center px-1 bg-background">
       <Link to="/">
         <Tooltip>
           <TooltipTrigger asChild>

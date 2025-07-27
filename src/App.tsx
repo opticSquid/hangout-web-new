@@ -23,7 +23,7 @@ function App() {
   return (
     <ThemeProvider>
       <DeviceDetailsProvider>
-        <div className="h-screen w-screen">
+        <div className="h-screen w-screen md:w-3/4 lg:w-1/4 mx-auto bg-background">
           <BrowserRouter>
             <main className="h-16/17">
               <Routes>
@@ -42,7 +42,7 @@ function App() {
                 />
               </Routes>
             </main>
-            <footer className="fixed bottom-0">
+            <footer className="fixed bottom-0 w-screen md:w-3/4 lg:w-1/4">
               <BottomBarComponent />
             </footer>
           </BrowserRouter>

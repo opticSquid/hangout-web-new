@@ -17,9 +17,10 @@ function LogoutComponent(): ReactElement {
   const OnLogout = async () => {
     try {
       setIsLoading(true);
-      await LogOut(deviceDetails);
-      accessTokenContextHandler.setAccessToken(null);
-      navigate("/");
+      LogOut(deviceDetails).then(() => {
+        accessTokenContextHandler.setAccessToken(null);
+        navigate("/");
+      });
     } catch (error: any) {
       const err = error as ProblemDetail;
       setApiError(err);
