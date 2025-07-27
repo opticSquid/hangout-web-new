@@ -75,7 +75,7 @@ function ReplyPage(): ReactElement {
           filename={postDetails.filename}
           hostURL={`${import.meta.env.VITE_API_BASE_URL}/processed`}
           autoPlay={true}
-          showInteractions={false}
+          showDistance={false}
           postInteractions={{
             hearts: postDetails.hearts,
             comments: postDetails.comments,

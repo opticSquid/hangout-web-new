@@ -1,24 +1,32 @@
 import type { PostComponentProps } from "@/lib/types/props/post-component-props";
 import type { ReactElement } from "react";
 import VideoPlayer from "./video-player";
+import { cn } from "@/lib/utils/utils";
 function PostComponent(props: PostComponentProps): ReactElement {
   return (
     <div
-      className="snap-start snap-always h-full post-container"
+      className={cn(
+        "snap-start snap-always post-container",
+        props.twHeightClassName
+      )}
       post-id={props.post.postId}
     >
       <VideoPlayer
-        postId={props.post.postId}
-        filename={props.post.filename}
-        hostURL={`${import.meta.env.VITE_API_BASE_URL}/processed`}
-        showInteractions={true}
-        autoPlay={props.canPlayVideo}
-        postInteractions={{
-          hearts: props.post.hearts,
-          comments: props.post.comments,
-          distance: props.post.distance,
-          interactions: props.post.interactions,
-          location: props.post.location,
+        videoProps={{
+          hostURL: `${import.meta.env.VITE_API_BASE_URL}/processed`,
+          filename: props.post.filename,
+          autoPlay: props.canPlayVideo,
+        }}
+        interactionProps={{
+          postInteractions: {
+            hearts: props.post.hearts,
+            comments: props.post.comments,
+            distance: props.post.distance,
+            interactions: props.post.interactions,
+            location: props.post.location,
+          },
+          postId: props.post.postId,
+          showDistance: props.showDistance,
         }}
       />
     </div>

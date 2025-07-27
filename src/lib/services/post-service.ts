@@ -75,3 +75,25 @@ export async function AddPost(formData: FormData): Promise<NewPostRs> {
     throw error;
   }
 }
+
+export async function FetchOwnPostsData(): Promise<Post[]> {
+  try {
+    const rqConfig: CustomAxiosRequestConfig = {
+      skipAuth: true,
+      headers: new AxiosHeaders({ accept: "application/json" }),
+      withCredentials: false,
+    };
+    const response = await axiosInstance.get(
+      "/post-api/v1/post/my-posts",
+      rqConfig
+    );
+    return response.data as Post[];
+  } catch (error) {
+    if (isAxiosError(error)) {
+      if (error.response && error.response.data) {
+        throw error.response.data as ProblemDetail;
+      }
+    }
+    throw error;
+  }
+}

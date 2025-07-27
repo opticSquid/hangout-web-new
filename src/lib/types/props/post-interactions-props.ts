@@ -6,4 +6,5 @@ export interface PostInteractionProps {
   commentCount: number;
   distance: number;
   location: Location;
+  showDistance: boolean;
 }

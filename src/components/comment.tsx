@@ -1,13 +1,40 @@
+import { FetchOtherProfileData } from "@/lib/services/profile-service";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import type { PublicProfile } from "@/lib/types/profile";
 import type { CommentProps } from "@/lib/types/props/comment-props";
 import { getTimeDifferenceFromUTC } from "@/lib/utils/time-difference";
+import { cn } from "@/lib/utils/utils";
 import { DotIcon, MessageSquareReplyIcon } from "lucide-react";
-import type { ReactElement } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { Link } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils/utils";
+import { GetInitials } from "@/lib/utils/extract-initials";
+import ErrorComponent from "./error";
 
 function CommentComponent(props: CommentProps): ReactElement {
+  const [apiError, setApiError] = useState<ProblemDetail>();
+  const [profileData, setProfileData] = useState<PublicProfile>();
+  useEffect(() => {
+    const func = async () => {
+      try {
+        const response = await FetchOtherProfileData(props.comment.userId);
+        setProfileData(response);
+      } catch (error: any) {
+        const err = error as ProblemDetail;
+        setApiError(err);
+      }
+    };
+    func();
+  }, []);
+
+  const profilePictureUrl =
+    profileData != undefined
+      ? `${import.meta.env.VITE_API_BASE_URL}/profile-photos/${
+          profileData.profilePicture
+        }`
+      : undefined;
+
   return (
     <>
       <div
@@ -17,12 +44,12 @@ function CommentComponent(props: CommentProps): ReactElement {
         )}
       >
         <Avatar className="size-10">
-          <AvatarImage src="/images/small.jpg" className="object-cover" />
-          <AvatarFallback>TI</AvatarFallback>
+          <AvatarImage src={profilePictureUrl} className="object-cover" />
+          <AvatarFallback>{GetInitials(profileData?.name)}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
           <div className="flex flex-row items-center text-base font-semibold tracking-tighter">
-            <div>Commenter Name</div>
+            <div>{profileData?.name}</div>
             <DotIcon size={16} />
             <div className="text-neutral-500">
               {getTimeDifferenceFromUTC(props.comment.createdAt)}
@@ -53,8 +80,8 @@ function CommentComponent(props: CommentProps): ReactElement {
           )}
         </div>
       </div>
-
       <hr className="ml-2 mr-2 bg-gray-400 dark:bg-slate-800" />
+      {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </>
   );
 }

@@ -44,7 +44,10 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
   // load videos
   useEffect(() => {
     if (shouldLoad) {
-      const extractedFilename = props.filename.replace(/\.[^.]+$/, "");
+      const extractedFilename = props.videoProps.filename.replace(
+        /\.[^.]+$/,
+        ""
+      );
 
       if (!videoRef.current || !containerRef.current) return;
 
@@ -71,7 +74,9 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
       };
 
       player
-        .load(`${props.hostURL}/${extractedFilename}/${extractedFilename}.mpd`)
+        .load(
+          `${props.videoProps.hostURL}/${extractedFilename}/${extractedFilename}.mpd`
+        )
         .then(() => console.log("The video has now been loaded!"))
         .catch(onError);
 
@@ -79,15 +84,15 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
         player.destroy().catch(console.error);
       };
     }
-  }, [shouldLoad, props.filename]);
+  }, [shouldLoad, props.videoProps.filename]);
 
   useEffect(() => {
-    if (props.autoPlay) {
+    if (props.videoProps.autoPlay) {
       videoRef.current?.play();
     } else {
       videoRef.current?.pause();
     }
-  }, [props.autoPlay]);
+  }, [props.videoProps.autoPlay]);
 
   return videoNotAvailable ? (
     <Card>
@@ -109,19 +114,18 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
             data-shaka-player
             id="video"
             ref={videoRef}
-            autoPlay={props.autoPlay}
+            autoPlay={props.videoProps.autoPlay}
             loop
             className="aspect-9/16 object-cover w-full"
           />
-          {props.showInteractions && (
-            <PostInteractionsComponent
-              postId={props.postId}
-              heartCount={props.postInteractions.hearts}
-              commentCount={props.postInteractions.comments}
-              distance={props.postInteractions.distance}
-              location={props.postInteractions.location}
-            />
-          )}
+          <PostInteractionsComponent
+            postId={props.interactionProps.postId}
+            heartCount={props.interactionProps.postInteractions.hearts}
+            commentCount={props.interactionProps.postInteractions.comments}
+            distance={props.interactionProps.postInteractions.distance}
+            location={props.interactionProps.postInteractions.location}
+            showDistance={props.interactionProps.showDistance}
+          />
         </>
       )}
     </div>

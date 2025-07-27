@@ -177,7 +177,10 @@ function HomePage(): ReactElement {
           posts.map((post: Post) => (
             <PostComponent
               key={post.postId}
-              {...{ post: post, canPlayVideo: post.postId === visiblePostId }}
+              post={post}
+              canPlayVideo={post.postId === visiblePostId}
+              showDistance={true}
+              twHeightClassName="h-full"
             />
           ))
         ) : (

@@ -1,4 +1,4 @@
 export interface ProfileHeaderProps {
-  profilePictureBaseUrl: string;
+  profilePictureBaseUrl: string | undefined;
   name: string;
 }

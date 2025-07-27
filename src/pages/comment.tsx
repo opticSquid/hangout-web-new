@@ -1,7 +1,7 @@
 import AddCommentComponent from "@/components/add-comment";
 import CommentComponent from "@/components/comment";
 import ErrorComponent from "@/components/error";
-import VideoPlayer from "@/components/video-player";
+import PostComponent from "@/components/post";
 import { FetchAllTopLevelComments } from "@/lib/services/comment-service";
 import { FetchPostById } from "@/lib/services/post-service";
 import type { Comment } from "@/lib/types/comment";
@@ -15,6 +15,7 @@ function CommentPage(): ReactElement {
   const [postDetails, setPostDetails] = useState<Post>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [apiError, setApiError] = useState<ProblemDetail>();
+
   useEffect(() => {
     if (postId !== undefined) {
       const fetchPost = async () => {
@@ -44,30 +45,18 @@ function CommentPage(): ReactElement {
       Promise.all([fetchPost(), fetchComments()]);
     }
   }, [postId]);
+
   const appendComment = (comment: Comment) => {
     setComments((prevComments) => [comment, ...prevComments]);
   };
   return postDetails !== undefined ? (
     <>
-      <div
-        className="snap-start snap-always h-3/5 post-container"
-        post-id={postDetails.postId}
-      >
-        <VideoPlayer
-          postId={postDetails.postId}
-          filename={postDetails.filename}
-          hostURL={`${import.meta.env.VITE_API_BASE_URL}/processed`}
-          autoPlay={true}
-          showInteractions={false}
-          postInteractions={{
-            hearts: postDetails.hearts,
-            comments: postDetails.comments,
-            distance: postDetails.distance,
-            interactions: postDetails.interactions,
-            location: postDetails.location,
-          }}
-        />
-      </div>
+      <PostComponent
+        post={postDetails}
+        canPlayVideo={true}
+        showDistance={false}
+        twHeightClassName="h-3/5"
+      />
       <div className="h-2/5 flex flex-col">
         <div className="overflow-y-scroll grow">
           {comments.map((comment) => {

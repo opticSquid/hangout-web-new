@@ -81,10 +81,12 @@ function PostInteractionsComponent(props: PostInteractionProps) {
         >
           <MapPinIcon className="size-10" />
         </Button>
-        <div>
-          {props.distance < 1000 ? "< 1" : (props.distance / 1000).toFixed(2)}
-          &nbsp;km
-        </div>
+        {props.showDistance && (
+          <div>
+            {props.distance < 1000 ? "< 1" : (props.distance / 1000).toFixed(2)}
+            &nbsp;km
+          </div>
+        )}
       </div>
       {isLocationShowed && (
         <ShowLocationOnMapComponent
