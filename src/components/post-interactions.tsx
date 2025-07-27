@@ -59,6 +59,7 @@ function PostInteractionsComponent(props: PostInteractionProps) {
           size="icon"
           onClick={toggleIsHearted}
           disabled={accessTokenObject.accessToken === null}
+          className="hover:bg-accent/0 dark:hover:bg-accent/0 hover:text-primary/50"
         >
           {hearted.isHearted ? (
             <HeartIcon
@@ -73,7 +74,12 @@ function PostInteractionsComponent(props: PostInteractionProps) {
         <div>{hearted.heartCount}</div>
       </div>
       <div className="flex flex-col items-center gap-y-2">
-        <Button variant="ghost" size="icon" onClick={navigateToComment}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={navigateToComment}
+          className="hover:bg-accent/0 dark:hover:bg-accent/0 hover:text-primary/50"
+        >
           <MessageCircleIcon className="size-10" />
         </Button>
         <div>{props.commentCount}</div>
@@ -83,6 +89,7 @@ function PostInteractionsComponent(props: PostInteractionProps) {
           variant="ghost"
           size="icon"
           onClick={() => setIsLocationShowed(true)}
+          className="hover:bg-accent/0 dark:hover:bg-accent/0 hover:text-primary/50"
         >
           <MapPinIcon className="size-10" />
         </Button>

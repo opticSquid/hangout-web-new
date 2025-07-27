@@ -1,10 +1,9 @@
 import type { ProfileHeaderProps } from "@/lib/types/props/profile-header-props";
 import { GetInitials } from "@/lib/utils/extract-initials";
-import { EllipsisIcon } from "lucide-react";
 import type { ReactElement } from "react";
 import LogoutComponent from "./logout-button";
+import ThemeToggle from "./theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
 
 function ProfileHeaderComponent(props: ProfileHeaderProps): ReactElement {
   return (
@@ -22,9 +21,10 @@ function ProfileHeaderComponent(props: ProfileHeaderProps): ReactElement {
         </div>
         <div className="flex flex-row gap-x-2 items-center justify-between">
           <LogoutComponent />
-          <Button variant="outline" size="icon">
+          {/* <Button variant="outline" size="icon">
             <EllipsisIcon />
-          </Button>
+          </Button> */}
+          <ThemeToggle />
         </div>
       </div>
     </div>
