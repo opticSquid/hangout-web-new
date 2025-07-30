@@ -13,6 +13,7 @@ import ReplyPage from "./pages/reply";
 import SigninPage from "./pages/signin";
 import SignUpPage from "./pages/signup";
 import { Toaster } from "sonner";
+import RouteProtection from "./components/route-protection";
 function App() {
   const accessTokenContextHandler = useAccessTokenContextHandler();
   useEffect(() => {
@@ -30,8 +31,22 @@ function App() {
             <main className="h-16/17">
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/create" element={<CreatePage />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route
+                  path="/create"
+                  element={
+                    <RouteProtection>
+                      <CreatePage />
+                    </RouteProtection>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <RouteProtection>
+                      <ProfilePage />
+                    </RouteProtection>
+                  }
+                />
                 <Route path="/sign-in" element={<SigninPage />} />
                 <Route path="/sign-up" element={<SignUpPage />} />
                 <Route

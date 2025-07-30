@@ -3,7 +3,6 @@ import LoadingOverlay from "@/components/loading-overlay";
 import MediaChooserComponent from "@/components/media-chooser";
 import ReviewContentComponent from "@/components/review-content";
 import SetLocationOnMapComponent from "@/components/set-location-on-map";
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { AddPost } from "@/lib/services/post-service";
 import type { Address } from "@/lib/types/address";
 import type { AcceptedMediaType } from "@/lib/types/media";
@@ -16,7 +15,6 @@ import { toast } from "sonner";
 
 function CreatePage(): ReactElement {
   const navigate = useNavigate();
-  const isLoggedIn = useAuthGuard();
   const [step, setStep] = useState<number>(0);
   const [media, setMedia] = useState<Blob | null>(null);
   const [mediaType, setMediaType] = useState<AcceptedMediaType>(null);
@@ -74,51 +72,47 @@ function CreatePage(): ReactElement {
       }
     }
   }
-  if (isLoggedIn) {
-    switch (step) {
-      case 0: {
+  switch (step) {
+    case 0: {
+      return (
+        <div className="h-full">
+          <MediaChooserComponent onMediaCaptured={onMediaCaptured} />
+        </div>
+      );
+    }
+    case 1: {
+      if (media && mediaType) {
         return (
-          <div className="h-full">
-            <MediaChooserComponent onMediaCaptured={onMediaCaptured} />
-          </div>
+          <ReviewContentComponent
+            blob={media}
+            mediaType={mediaType}
+            onRetake={onRetake}
+            onAddAddress={onAddAddress}
+          />
         );
-      }
-      case 1: {
-        if (media && mediaType) {
-          return (
-            <ReviewContentComponent
-              blob={media}
-              mediaType={mediaType}
-              onRetake={onRetake}
-              onAddAddress={onAddAddress}
-            />
-          );
-        } else {
-          setStep(1);
-          return <MediaChooserComponent onMediaCaptured={onMediaCaptured} />;
-        }
-      }
-      case 2: {
-        return (
-          <>
-            <SetLocationOnMapComponent onSubmit={onSubmit} />
-            {isLoading && <LoadingOverlay message="Posting..." />}
-            {apiError && (
-              <ErrorComponent error={apiError} setError={setApiError} />
-            )}
-          </>
-        );
-      }
-      default: {
-        return (
-          <div className="h-full">
-            <MediaChooserComponent onMediaCaptured={onMediaCaptured} />
-          </div>
-        );
+      } else {
+        setStep(1);
+        return <MediaChooserComponent onMediaCaptured={onMediaCaptured} />;
       }
     }
-  } else {
-    return <></>;
+    case 2: {
+      return (
+        <>
+          <SetLocationOnMapComponent onSubmit={onSubmit} />
+          {isLoading && <LoadingOverlay message="Posting..." />}
+          {apiError && (
+            <ErrorComponent error={apiError} setError={setApiError} />
+          )}
+        </>
+      );
+    }
+    default: {
+      return (
+        <div className="h-full">
+          <MediaChooserComponent onMediaCaptured={onMediaCaptured} />
+        </div>
+      );
+    }
   }
 }
 
