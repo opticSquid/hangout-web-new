@@ -8,8 +8,11 @@ import { AddPost } from "@/lib/services/post-service";
 import type { Address } from "@/lib/types/address";
 import type { AcceptedMediaType } from "@/lib/types/media";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import { FormatDate } from "@/lib/utils/date-utils";
+import { CheckCircle2Icon } from "lucide-react";
 import { useState, type ReactElement } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 function CreatePage(): ReactElement {
   const navigate = useNavigate();
@@ -50,9 +53,19 @@ function CreatePage(): ReactElement {
       formData.append("city", address.city);
       try {
         setIsLoading(true);
-        AddPost(formData).then(() => {
-          navigate("/");
-        });
+        AddPost(formData)
+          .then(() => {
+            console.log("2nd step");
+            toast.success("Post created successfully!", {
+              description: FormatDate(new Date()),
+              duration: 3500,
+              icon: <CheckCircle2Icon />,
+            });
+          })
+          .then(() => {
+            console.log("3rd step");
+            navigate("/");
+          });
       } catch (error: any) {
         error = error as ProblemDetail;
         setApiError(error);

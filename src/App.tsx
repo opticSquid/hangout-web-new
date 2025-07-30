@@ -12,6 +12,7 @@ import ProfilePage from "./pages/profile";
 import ReplyPage from "./pages/reply";
 import SigninPage from "./pages/signin";
 import SignUpPage from "./pages/signup";
+import { Toaster } from "sonner";
 function App() {
   const accessTokenContextHandler = useAccessTokenContextHandler();
   useEffect(() => {
@@ -24,6 +25,7 @@ function App() {
     <ThemeProvider>
       <DeviceDetailsProvider>
         <div className="h-screen w-screen md:w-3/4 lg:w-1/4 mx-auto bg-background md:shadow-xl/40 shadow-foreground">
+          <Toaster position="top-center" richColors />
           <BrowserRouter>
             <main className="h-16/17">
               <Routes>
