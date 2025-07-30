@@ -25,8 +25,8 @@ function CommentPage(): ReactElement {
           const post = await FetchPostById(postId);
           setPostDetails(post);
         } catch (error: any) {
-          error = error as ProblemDetail;
-          setApiError(error);
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
         }
       };
       const fetchComments = async () => {
@@ -40,8 +40,8 @@ function CommentPage(): ReactElement {
           });
           setComments(comments);
         } catch (error: any) {
-          error = error as ProblemDetail;
-          setApiError(error);
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
         }
       };
       Promise.all([fetchPost(), fetchComments()]);

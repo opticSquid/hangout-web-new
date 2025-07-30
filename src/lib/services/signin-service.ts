@@ -1,14 +1,14 @@
 import { isAxiosError } from "axios";
 import type { DeviceDetails } from "../types/device-details";
 import type { LoginFormSchema } from "../types/login";
-import type { SigninResponse } from "../types/model/signin-response";
+import type { AuthResponse } from "../types/model/auth-response";
 import type { ProblemDetail } from "../types/model/problem-detail";
 import axiosInstance from "../utils/axios-instance";
 
 export async function Signin(
   creds: LoginFormSchema,
   deviceDetails: DeviceDetails
-): Promise<SigninResponse> {
+): Promise<AuthResponse> {
   try {
     const response = await axiosInstance.post(
       "/auth-api/v1/auth/login",
@@ -22,7 +22,7 @@ export async function Signin(
         withCredentials: true,
       }
     );
-    return response.data as SigninResponse;
+    return response.data as AuthResponse;
   } catch (error) {
     if (isAxiosError(error)) {
       if (error.response && error.response.data) {

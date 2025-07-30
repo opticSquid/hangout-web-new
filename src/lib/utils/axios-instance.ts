@@ -50,6 +50,8 @@ axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
     const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      config.headers.Authorization = `Bearer `;
     }
   }
   return config;

@@ -1,7 +1,7 @@
 import { useDeviceDetails } from "@/lib/hooks/useDeviceDetails";
 import { Trust } from "@/lib/services/trust-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
-import type { SigninResponse } from "@/lib/types/model/signin-response";
+import type { AuthResponse } from "@/lib/types/model/auth-response";
 import type { TrustDeviceAlertProps } from "@/lib/types/props/trust-device-alert-props";
 import { useState, type ReactElement } from "react";
 import { useNavigate } from "react-router";
@@ -25,7 +25,7 @@ function TrustDeviceAlertComponent(props: TrustDeviceAlertProps): ReactElement {
   const trustDevice = async () => {
     try {
       setIsLoading(true);
-      const response: SigninResponse = await Trust(deviceDetails);
+      const response: AuthResponse = await Trust(deviceDetails);
       props.handleTrustResult({
         accessToken: response.accessToken,
         trustedDevice: response.isTrustedDevice,

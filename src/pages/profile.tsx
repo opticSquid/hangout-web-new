@@ -4,17 +4,15 @@ import PostComponent from "@/components/post";
 import ProfileHeaderComponent from "@/components/profile-header";
 import { Button } from "@/components/ui/button";
 import { LoadNPosts, SavePostsToDB } from "@/lib/db/my-posts-db";
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { FetchOwnPostsData } from "@/lib/services/post-service";
 import { FetchOwnProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { PagePointer, ProfilePost } from "@/lib/types/post";
 import type { Profile } from "@/lib/types/profile";
-import { Grid3X3Icon } from "lucide-react";
+import { Grid3X3Icon, Loader2Icon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 
 function ProfilePage(): ReactElement {
-  const isLoggedIn = useAuthGuard();
   const [loadData, setLoadData] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [profileData, setProfileData] = useState<Profile>();
@@ -35,8 +33,8 @@ function ProfilePage(): ReactElement {
         const response = await FetchOwnProfileData();
         setProfileData(response);
       } catch (error: any) {
-        error = error as ProblemDetail;
-        setApiError(error);
+        const prblm = error as ProblemDetail;
+        setApiError(prblm);
       } finally {
         setIsLoading(false);
       }
@@ -134,7 +132,7 @@ function ProfilePage(): ReactElement {
     return () => postElements.forEach((el) => observer.unobserve(el));
   }, [postToTriggerDataLoad]);
 
-  return isLoggedIn && profileData !== undefined ? (
+  return profileData !== undefined ? (
     <div className="flex flex-col h-full">
       <ProfileHeaderComponent
         profilePictureBaseUrl={`${
@@ -148,6 +146,21 @@ function ProfilePage(): ReactElement {
           &nbsp;POSTS
         </Button>
       </div>
+      {posts.filter((post) => post.processStatus === "IN_QUEUE").length > 0 && (
+        <div className="flex flex-row items-center space-x-1 p-1 bg-secondary">
+          <span>
+            <Loader2Icon
+              className="h-5 w-5 animate-spin text-primary"
+              strokeWidth={5}
+            />
+          </span>
+          <span className="text font-light">
+            {posts.filter((post) => post.processStatus !== "SUCCESS").length}
+            &nbsp;posts are being processed...
+          </span>
+        </div>
+      )}
+
       <section className="overflow-y-auto scrollbar-hide scroll-smooth snap-y snap-mandatory">
         {posts
           .filter((post) => post.processStatus === "SUCCESS")

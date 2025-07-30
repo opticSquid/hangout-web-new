@@ -1,12 +1,12 @@
 import { isAxiosError } from "axios";
 import type { DeviceDetails } from "../types/device-details";
-import type { SigninResponse } from "../types/model/signin-response";
+import type { AuthResponse } from "../types/model/auth-response";
 import axiosInstance from "../utils/axios-instance";
 import type { ProblemDetail } from "../types/model/problem-detail";
 
 export async function Trust(
   deviceDetails: DeviceDetails
-): Promise<SigninResponse> {
+): Promise<AuthResponse> {
   try {
     const response = await axiosInstance.get("/auth-api/v1/user/trust-device", {
       headers: {
@@ -16,7 +16,7 @@ export async function Trust(
       },
       withCredentials: true,
     });
-    let data = response.data as SigninResponse;
+    const data = response.data as AuthResponse;
     data.isTrustedDevice = true;
     return data;
   } catch (error) {

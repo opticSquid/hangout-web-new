@@ -30,8 +30,8 @@ function ReplyPage(): ReactElement {
           const post = await FetchPostById(postId);
           setPostDetails(post);
         } catch (error: any) {
-          error = error as ProblemDetail;
-          setApiError(error);
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
         }
       };
       const fetchComment = async () => {
@@ -39,8 +39,8 @@ function ReplyPage(): ReactElement {
           const comment = await FetchCommentById(commentId);
           setCommentDetails(comment);
         } catch (error: any) {
-          error = error as ProblemDetail;
-          setApiError(error);
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
         }
       };
       const fetchReplies = async () => {
@@ -54,8 +54,8 @@ function ReplyPage(): ReactElement {
           });
           setReplies(replies);
         } catch (error: any) {
-          error = error as ProblemDetail;
-          setApiError(error);
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
         }
       };
       Promise.all([fetchPost(), fetchComment(), fetchReplies()]);

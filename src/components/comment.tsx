@@ -2,7 +2,7 @@ import { FetchOtherProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { PublicProfile } from "@/lib/types/profile";
 import type { CommentProps } from "@/lib/types/props/comment-props";
-import { getTimeDifferenceFromUTC } from "@/lib/utils/time-difference";
+import { GetTimeDifferenceFromUTC } from "@/lib/utils/date-utils";
 import { cn } from "@/lib/utils/utils";
 import { DotIcon, MessageSquareReplyIcon } from "lucide-react";
 import { useEffect, useState, type ReactElement } from "react";
@@ -52,7 +52,7 @@ function CommentComponent(props: CommentProps): ReactElement {
             <div>{profileData?.name}</div>
             <DotIcon size={16} />
             <div className="text-neutral-500">
-              {getTimeDifferenceFromUTC(props.comment.createdAt)}
+              {GetTimeDifferenceFromUTC(props.comment.createdAt)}
             </div>
           </div>
           <div className="text-lg">{props.comment.text}</div>
