@@ -30,7 +30,6 @@ function initDeviceSpecs(): DeviceDetails {
 export async function RenewAccessToken(): Promise<string> {
   const deviceSpecs = initDeviceSpecs();
   try {
-    console.log("Requesting access token renewal");
     const response = await axios.get(
       `${import.meta.env.VITE_API_BASE_URL}/auth-api/v1/auth/renew`,
       {
@@ -42,10 +41,8 @@ export async function RenewAccessToken(): Promise<string> {
         withCredentials: true,
       }
     );
-    console.log("Access token renew response:", response);
     return response.data.accessToken;
   } catch (error) {
-    console.error("Error renewing access token:", error);
     if (isAxiosError(error) && error.response?.data) {
       throw error.response.data as ProblemDetail;
     }
