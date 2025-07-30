@@ -36,7 +36,7 @@ function MapComponent(props: MapComponentProps): ReactElement {
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
-        props.setPosition && props.setPosition({ lat, lng });
+        props.setPosition?.({ lat, lng }); // call if setPosition exists
       },
     });
 

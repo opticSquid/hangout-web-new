@@ -43,8 +43,8 @@ function PostInteractionsComponent(props: PostInteractionProps) {
           };
         });
       } catch (error: any) {
-        error = error as ProblemDetail;
-        setApiError(error);
+        const prblm = error as ProblemDetail;
+        setApiError(prblm);
       }
     }
   };

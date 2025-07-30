@@ -35,8 +35,8 @@ function ReviewContentComponent(props: ReviewContentProps): ReactElement {
             const response = await FindAddress(position);
             setAddress(response);
           } catch (error: any) {
-            error = error as ProblemDetail;
-            setApiError(error);
+            const prblm = error as ProblemDetail;
+            setApiError(prblm);
           } finally {
             setIsLoading(false);
           }

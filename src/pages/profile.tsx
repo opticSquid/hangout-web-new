@@ -33,8 +33,8 @@ function ProfilePage(): ReactElement {
         const response = await FetchOwnProfileData();
         setProfileData(response);
       } catch (error: any) {
-        error = error as ProblemDetail;
-        setApiError(error);
+        const prblm = error as ProblemDetail;
+        setApiError(prblm);
       } finally {
         setIsLoading(false);
       }

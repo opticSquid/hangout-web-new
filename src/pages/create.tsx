@@ -65,8 +65,8 @@ function CreatePage(): ReactElement {
             navigate("/");
           });
       } catch (error: any) {
-        error = error as ProblemDetail;
-        setApiError(error);
+        const prblm = error as ProblemDetail;
+        setApiError(prblm);
       } finally {
         setIsLoading(false);
       }

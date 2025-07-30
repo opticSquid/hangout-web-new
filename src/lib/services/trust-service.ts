@@ -16,7 +16,7 @@ export async function Trust(
       },
       withCredentials: true,
     });
-    let data = response.data as AuthResponse;
+    const data = response.data as AuthResponse;
     data.isTrustedDevice = true;
     return data;
   } catch (error) {
