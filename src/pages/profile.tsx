@@ -10,7 +10,7 @@ import { FetchOwnProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
 import type { PagePointer, ProfilePost } from "@/lib/types/post";
 import type { Profile } from "@/lib/types/profile";
-import { Grid3X3Icon } from "lucide-react";
+import { Grid3X3Icon, Loader2Icon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 
 function ProfilePage(): ReactElement {
@@ -148,6 +148,21 @@ function ProfilePage(): ReactElement {
           &nbsp;POSTS
         </Button>
       </div>
+      {posts.filter((post) => post.processStatus === "IN_QUEUE").length > 0 && (
+        <div className="flex flex-row items-center space-x-1 p-1 bg-secondary">
+          <span>
+            <Loader2Icon
+              className="h-5 w-5 animate-spin text-primary"
+              strokeWidth={5}
+            />
+          </span>
+          <span className="text font-light">
+            {posts.filter((post) => post.processStatus !== "SUCCESS").length}
+            &nbsp;posts are being processed...
+          </span>
+        </div>
+      )}
+
       <section className="overflow-y-auto scrollbar-hide scroll-smooth snap-y snap-mandatory">
         {posts
           .filter((post) => post.processStatus === "SUCCESS")

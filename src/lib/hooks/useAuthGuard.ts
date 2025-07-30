@@ -8,28 +8,39 @@ import {
 import { useDeviceDetails } from "./useDeviceDetails";
 
 export const useAuthGuard = (): boolean => {
-  const { accessToken } = useAccessTokenContextObject();
+  const accessTokenObject = useAccessTokenContextObject();
   const accessTokenHandler = useAccessTokenContextHandler();
   const deviceDetails = useDeviceDetails();
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    !!accessToken
+    accessTokenObject.accessToken !== null
   );
 
   useEffect(() => {
-    if (accessToken === null) {
-      DeliberateRenewAccessToken(deviceDetails)
-        .then((token) => {
-          accessTokenHandler.setAccessToken(token);
+    const func = async () => {
+      if (isAuthenticated === false) {
+        try {
+          console.log("useAuthGuard: Checking authentication status...");
+
+          console.log(
+            "useAuthGuard: No access token found, trying to renew..."
+          );
+          const response = await DeliberateRenewAccessToken(deviceDetails);
+          console.log("useAuthGuard: Access token renewed successfully.");
+          accessTokenHandler.setAccessToken(response);
           setIsAuthenticated(true);
-        })
-        .catch(() => {
+        } catch (error: any) {
+          console.error("useAuthGuard: Error renewing access token:", error);
           accessTokenHandler.setAccessToken(null);
           navigate("/sign-in", { replace: true });
           setIsAuthenticated(false);
-        });
-    }
-  }, [accessToken, accessTokenHandler, deviceDetails, navigate]);
+        }
+      } else {
+        console.log("access token is not null");
+      }
+    };
+    func();
+  }, [accessTokenObject.accessToken]);
 
   return isAuthenticated;
 };
