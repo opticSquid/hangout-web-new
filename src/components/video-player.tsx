@@ -75,7 +75,9 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
 
       player
         .load(
-          `${props.videoProps.hostURL}/${extractedFilename}/${extractedFilename}.mpd`
+          `${
+            import.meta.env.VITE_API_CDN_URL
+          }/${extractedFilename}/${extractedFilename}.mpd`
         )
         .then(() => console.log("The video has now been loaded!"))
         .catch(onError);
