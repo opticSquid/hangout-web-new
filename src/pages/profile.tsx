@@ -4,6 +4,7 @@ import PostComponent from "@/components/post";
 import ProfileHeaderComponent from "@/components/profile-header";
 import { Button } from "@/components/ui/button";
 import { LoadNPosts, SavePostsToDB } from "@/lib/db/my-posts-db";
+import { FetchProfilePictureUrl } from "@/lib/services/content-delivery-service";
 import { FetchOwnPostsData } from "@/lib/services/post-service";
 import { FetchOwnProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
@@ -16,6 +17,7 @@ function ProfilePage(): ReactElement {
   const [loadData, setLoadData] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [profileData, setProfileData] = useState<Profile>();
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
   const pageNumber = useRef<number>(1);
   const [posts, setPosts] = useState<ProfilePost[]>([]);
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
@@ -41,6 +43,26 @@ function ProfilePage(): ReactElement {
     };
     fetchProfile();
   }, []);
+
+  /**
+   * Fetches the user's profile picture URL when the profile data is available.
+   */
+  useEffect(() => {
+    if (profileData?.profilePicture) {
+      const fetchProfilePicture = async () => {
+        try {
+          const response = await FetchProfilePictureUrl(
+            profileData.profilePicture.filename
+          );
+          setProfilePictureUrl(response.url);
+        } catch (error) {
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
+        }
+      };
+      fetchProfilePicture();
+    }
+  }, [profileData?.profilePicture]);
 
   const changePageNumber = (pagePointer: PagePointer) => {
     if (pagePointer.currentPage < pagePointer.totalPages) {
@@ -135,9 +157,7 @@ function ProfilePage(): ReactElement {
   return profileData !== undefined ? (
     <div className="flex flex-col h-full">
       <ProfileHeaderComponent
-        profilePictureBaseUrl={`${
-          import.meta.env.VITE_API_BASE_URL
-        }/profile-photos/${profileData.profilePicture.filename}`}
+        profilePictureBaseUrl={profilePictureUrl}
         name={profileData.name}
       />
       <div className="flex flex-row border-t border-b justify-center">

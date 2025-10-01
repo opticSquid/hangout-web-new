@@ -12,12 +12,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
+import { FetchProfilePictureUrl } from "@/lib/services/content-delivery-service";
 
 function AddCommentComponent(props: AddCommentProps): ReactElement {
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<Profile>();
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
   const [apiError, setApiError] = useState<ProblemDetail>();
+  /**
+   * Fetches the user's profile data when the component mounts.
+   */
   useEffect(() => {
     const func = async () => {
       try {
@@ -31,12 +36,25 @@ function AddCommentComponent(props: AddCommentProps): ReactElement {
     func();
   }, []);
 
-  const profilePictureUrl =
-    profileData != undefined
-      ? `${import.meta.env.VITE_API_BASE_URL}/profile-photos/${
-          profileData.profilePicture.filename
-        }`
-      : undefined;
+  /**
+   * Fetches the user's profile picture URL when the profile data is available.
+   */
+  useEffect(() => {
+    if (profileData?.profilePicture) {
+      const fetchProfilePicture = async () => {
+        try {
+          const response = await FetchProfilePictureUrl(
+            profileData.profilePicture.filename
+          );
+          setProfilePictureUrl(response.url);
+        } catch (error) {
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
+        }
+      };
+      fetchProfilePicture();
+    }
+  }, [profileData?.profilePicture]);
 
   async function onSubmit() {
     try {
