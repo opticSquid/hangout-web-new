@@ -12,6 +12,7 @@ import {
 } from "./ui/dialog";
 import MapComponent from "./map";
 import type { Position } from "@/lib/types/location";
+import "./stylesheets/map.css";
 function ShowLocationOnMapComponent(
   props: ShowLocationOnMapsProps
 ): ReactElement {
