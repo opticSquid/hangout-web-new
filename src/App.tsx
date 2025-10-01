@@ -13,6 +13,7 @@ import LoadingOverlay from "./components/loading-overlay";
 const HomePage = lazy(() => import("./pages/home"));
 const CreatePage = lazy(() => import("./pages/create"));
 const ProfilePage = lazy(() => import("./pages/profile"));
+const NewProfilePage = lazy(() => import("./pages/new-profile"));
 const SigninPage = lazy(() => import("./pages/signin"));
 const SignUpPage = lazy(() => import("./pages/signup"));
 const CommentPage = lazy(() => import("./pages/comment"));
@@ -52,6 +53,14 @@ function App() {
                       <RouteProtection>
                         <ProfilePage />
                       </RouteProtection>
+                    }
+                  />
+                  <Route
+                    path="/new-profile"
+                    element={
+                      // <RouteProtection>
+                      <NewProfilePage />
+                      // </RouteProtection>
                     }
                   />
                   <Route path="/sign-in" element={<SigninPage />} />
