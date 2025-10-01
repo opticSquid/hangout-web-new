@@ -190,6 +190,7 @@ function ProfilePage(): ReactElement {
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </div>
   ) : (
+    // TODO: form to crete profile incase it does not exist
     <div></div>
   );
 }
