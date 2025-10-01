@@ -58,9 +58,9 @@ function App() {
                   <Route
                     path="/new-profile"
                     element={
-                      // <RouteProtection>
-                      <NewProfilePage />
-                      // </RouteProtection>
+                      <RouteProtection>
+                        <NewProfilePage />
+                      </RouteProtection>
                     }
                   />
                   <Route path="/sign-in" element={<SigninPage />} />

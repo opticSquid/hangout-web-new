@@ -1,10 +1,19 @@
+import { CreateProfile } from "@/lib/services/profile-service";
+import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import type { ProfileSchema } from "@/lib/types/profile";
+import { FormatDate } from "@/lib/utils/date-utils";
+import { CheckCircle2Icon } from "lucide-react";
 import {
   useState,
   type ChangeEvent,
   type FormEvent,
   type ReactElement,
 } from "react";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import { DatePicker } from "./date-picker";
+import ErrorComponent from "./error";
+import LoadingOverlay from "./loading-overlay";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -26,17 +35,18 @@ import {
 } from "./ui/select";
 
 function NewProfileFormComponent(): ReactElement {
-  const [form, setForm] = useState({
+  const navigate = useNavigate();
+  const [form, setForm] = useState<ProfileSchema>({
     name: "",
     gender: "",
-    dob: undefined as Date | undefined,
-    profilePicture: undefined as File | undefined,
+    dob: undefined,
+    profilePicture: undefined,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
     {}
   );
-
+  const [apiError, setApiError] = useState<ProblemDetail>();
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -54,15 +64,43 @@ function NewProfileFormComponent(): ReactElement {
     setErrors((prev) => ({ ...prev, dob: undefined }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Add validation and submit logic here
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("gender", form.gender);
+      // also check if dob is from future
+      if (form.dob) {
+        formData.append("dob", form.dob.toISOString());
+        if (form.dob > new Date()) {
+          setErrors((prev) => ({
+            ...prev,
+            dob: "Date of birth cannot be in the future",
+          }));
+        }
+      }
+      if (form.profilePicture) {
+        formData.append("profile-picture", form.profilePicture);
+      }
+      CreateProfile(formData)
+        .then(() => {
+          toast.success("Profile created successfully!", {
+            description: FormatDate(new Date()),
+            duration: 3500,
+            icon: <CheckCircle2Icon />,
+          });
+        })
+        .then(() => {
+          navigate("/", { replace: true });
+        });
+    } catch (error) {
+      const problem = error as ProblemDetail;
+      setApiError(problem);
+    } finally {
       setIsLoading(false);
-      alert("Profile created!");
-    }, 1000);
+    }
   };
 
   return (
@@ -138,11 +176,13 @@ function NewProfileFormComponent(): ReactElement {
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Profile"}
+              Create Profile
             </Button>
           </CardFooter>
         </form>
       </Card>
+      {isLoading && <LoadingOverlay message="Creating your Profile..." />}
+      {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </div>
   );
 }
