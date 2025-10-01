@@ -11,10 +11,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { GetInitials } from "@/lib/utils/extract-initials";
 import ErrorComponent from "./error";
+import { FetchProfilePictureUrl } from "@/lib/services/content-delivery-service";
 
 function CommentComponent(props: CommentProps): ReactElement {
   const [apiError, setApiError] = useState<ProblemDetail>();
   const [profileData, setProfileData] = useState<PublicProfile>();
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
   useEffect(() => {
     const func = async () => {
       try {
@@ -28,12 +30,25 @@ function CommentComponent(props: CommentProps): ReactElement {
     func();
   }, []);
 
-  const profilePictureUrl =
-    profileData != undefined
-      ? `${import.meta.env.VITE_API_BASE_URL}/profile-photos/${
-          profileData.profilePicture
-        }`
-      : undefined;
+  /**
+   * Fetches the user's profile picture URL when the profile data is available.
+   */
+  useEffect(() => {
+    if (profileData?.profilePicture) {
+      const fetchProfilePicture = async () => {
+        try {
+          const response = await FetchProfilePictureUrl(
+            profileData.profilePicture
+          );
+          setProfilePictureUrl(response.url);
+        } catch (error) {
+          const prblm = error as ProblemDetail;
+          setApiError(prblm);
+        }
+      };
+      fetchProfilePicture();
+    }
+  }, [profileData?.profilePicture]);
 
   return (
     <>
