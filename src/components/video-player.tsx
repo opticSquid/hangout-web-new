@@ -53,6 +53,9 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
 
       const player = new shaka.Player();
       playerRef.current = player;
+      player.getNetworkingEngine().registerRequestFilter((type, request) => {
+        request.allowCrossSiteCredentials = true;
+      });
       const ui = new shaka.ui.Overlay(
         player,
         containerRef.current,

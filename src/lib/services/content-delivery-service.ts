@@ -11,10 +11,10 @@ export async function FetchSignedCookies(
     const rqConfig: CustomAxiosRequestConfig = {
       skipAuth: true,
       headers: new AxiosHeaders({ accept: "application/json" }),
-      withCredentials: false,
+      withCredentials: true,
     };
     const response = await axiosInstance.get(
-      `/hangout-content-delivery-api/get-content/${videoFileName}`,
+      `/hangout-content-delivery-api/v1/get-content/${videoFileName}`,
       rqConfig
     );
     return response.data as SingedCookie;
