@@ -1,13 +1,18 @@
 import { useAccessTokenContextObject } from "@/lib/hooks/useAccessToken";
+import { FetchProfilePictureUrl } from "@/lib/services/content-delivery-service";
 import { HeartStatus, UpdateHeartCount } from "@/lib/services/heart-service";
+import { FetchOtherProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
+import type { PublicProfile } from "@/lib/types/profile";
 import type { PostInteractionProps } from "@/lib/types/props/post-interactions-props";
+import { GetInitials } from "@/lib/utils/extract-initials";
 import { HeartIcon, MapPinIcon, MessageCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import ShowLocationOnMapComponent from "./show-location-on-map";
-import { Button } from "./ui/button";
 import ErrorComponent from "./error";
+import ShowLocationOnMapComponent from "./show-location-on-map";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
 
 function PostInteractionsComponent(props: PostInteractionProps) {
   const accessTokenObject = useAccessTokenContextObject();
@@ -16,15 +21,32 @@ function PostInteractionsComponent(props: PostInteractionProps) {
     isHearted: boolean;
     heartCount: number;
   }>({ isHearted: false, heartCount: props.heartCount });
+  const [profileData, setProfileData] = useState<PublicProfile>();
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
+  const [isLocationShowed, setIsLocationShowed] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<ProblemDetail>();
+
+  /**
+   * Fetches the heart status and profile picture when the component mounts.
+   */
   useEffect(() => {
     const checkHeartStatus = async () => {
       const res = await HeartStatus({ postId: props.postId });
       setHearted({ ...hearted, isHearted: res.hasHearted });
     };
-    checkHeartStatus();
+    const getProfilePicture = async () => {
+      const profileData = await FetchOtherProfileData(props.ownerId);
+      setProfileData(profileData);
+      if (profileData.profilePicture) {
+        const response = await FetchProfilePictureUrl(
+          profileData.profilePicture
+        );
+        setProfilePictureUrl(response.url);
+      }
+    };
+    Promise.all([checkHeartStatus(), getProfilePicture()]);
   }, []);
-  const [isLocationShowed, setIsLocationShowed] = useState<boolean>(false);
-  const [apiError, setApiError] = useState<ProblemDetail>();
+
   const toggleIsHearted = async () => {
     if (accessTokenObject === null) {
       navigate("/sign-in");
@@ -107,6 +129,10 @@ function PostInteractionsComponent(props: PostInteractionProps) {
           setIsOpen={setIsLocationShowed}
         />
       )}
+      <Avatar className="size-10">
+        <AvatarImage src={profilePictureUrl} className="object-cover" />
+        <AvatarFallback>{GetInitials(profileData?.name)}</AvatarFallback>
+      </Avatar>
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </div>
   );
