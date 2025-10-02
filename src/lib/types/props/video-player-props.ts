@@ -4,7 +4,8 @@ import type { PostInteractions } from "../post";
 export interface VideoPlayerProps {
   videoProps: videoProps;
   interactionProps: interactionProps;
-  fetchSignedCookies: Dispatch<SetStateAction<boolean>>;
+  isCookiesValid: boolean;
+  setIsCookieValid: Dispatch<SetStateAction<boolean>>;
 }
 
 interface videoProps {

@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, type ReactElement } from "react";
 import "shaka-player/dist/controls.css";
 // @ts-expect-error I don't know why this description was required by eslint
 import shaka from "shaka-player/dist/shaka-player.ui.js";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import PostInteractionsComponent from "./post-interactions";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 function VideoPlayer(props: VideoPlayerProps): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -67,16 +67,19 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
         controlPanelElements: ["fullscreen"],
       });
       const onError = (error: ShakaError) => {
-        if (error.code === 7002) {
-          console.warn("Ignoring Shaka timeout error:", error);
-          return; // Do nothing
-        } else {
-          props.fetchSignedCookies(true);
-          if (error.code === 1003) {
+        switch (error.code) {
+          case 7002:
+            console.warn("Ignoring Shaka timeout error:", error);
+            return; // Do nothing
+          case 1001:
+            props.setIsCookieValid(false);
+            break;
+          case 1003:
             setVideoNotAvailable(true);
-          } else {
+            break;
+          default:
             console.error("something wrong with shaka player: ", error);
-          }
+            break;
         }
       };
 
@@ -93,7 +96,7 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
         player.destroy().catch(console.error);
       };
     }
-  }, [shouldLoad, props.videoProps.filename]);
+  }, [shouldLoad, props.videoProps.filename, props.isCookiesValid]);
 
   useEffect(() => {
     if (props.videoProps.autoPlay) {
