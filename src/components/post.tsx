@@ -44,8 +44,10 @@ function PostComponent(props: PostComponentProps): ReactElement {
               location: props.post.location,
             },
             postId: props.post.postId,
+            ownerId: props.post.ownerId,
             showDistance: props.showDistance,
           }}
+          fetchSignedCookies={setIsCookieValid}
         />
       </div>
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}

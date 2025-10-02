@@ -53,7 +53,8 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
 
       const player = new shaka.Player();
       playerRef.current = player;
-      player.getNetworkingEngine().registerRequestFilter((type, request) => {
+      // @ts-ignore: allow any type for the parameters below
+      player.getNetworkingEngine().registerRequestFilter((_, request, __) => {
         request.allowCrossSiteCredentials = true;
       });
       const ui = new shaka.ui.Overlay(
@@ -69,10 +70,13 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
         if (error.code === 7002) {
           console.warn("Ignoring Shaka timeout error:", error);
           return; // Do nothing
-        } else if (error.code === 1003) {
-          setVideoNotAvailable(true);
         } else {
-          console.error("something wrong with shaka player: ", error);
+          props.fetchSignedCookies(true);
+          if (error.code === 1003) {
+            setVideoNotAvailable(true);
+          } else {
+            console.error("something wrong with shaka player: ", error);
+          }
         }
       };
 
@@ -125,6 +129,7 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
           />
           <PostInteractionsComponent
             postId={props.interactionProps.postId}
+            ownerId={props.interactionProps.ownerId}
             heartCount={props.interactionProps.postInteractions.hearts}
             commentCount={props.interactionProps.postInteractions.comments}
             distance={props.interactionProps.postInteractions.distance}

@@ -30,9 +30,13 @@ export async function DoesProfileExist(): Promise<boolean> {
     return response.status === 200;
   } catch (error) {
     if (isAxiosError(error)) {
-      return false;
+      if (error.response?.status === 404) {
+        return false;
+      } else {
+        throw error.response?.data as ProblemDetail;
+      }
     }
-    return false;
+    throw error;
   }
 }
 

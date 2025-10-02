@@ -17,6 +17,9 @@ function CommentComponent(props: CommentProps): ReactElement {
   const [apiError, setApiError] = useState<ProblemDetail>();
   const [profileData, setProfileData] = useState<PublicProfile>();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
+  /**
+   * Fetches the user's profile data when the component mounts.
+   */
   useEffect(() => {
     const func = async () => {
       try {
