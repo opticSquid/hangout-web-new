@@ -12,7 +12,7 @@ RUN pnpm install
 RUN pnpm run build
 
 # Stage 2: Serve with NGINX
-FROM nginx:1.29.0-alpine
+FROM nginx:1.29.1-alpine
 
 # Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
