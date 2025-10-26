@@ -30,61 +30,59 @@ function App() {
   }, [accessTokenContextHandler]);
 
   return (
-    <>
-      <ThemeProvider>
-        <DeviceDetailsProvider>
-          <div className="h-[98vh] md:h-screen w-screen md:w-3/4 lg:w-1/4 mx-auto bg-background md:shadow-xl/40 shadow-foreground">
-            <Toaster position="top-center" richColors />
-            <BrowserRouter>
-              <Suspense fallback={<LoadingOverlay message="loading..." />}>
-                <main className="h-15/17 md:h-16/17">
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route
-                      path="/create"
-                      element={
-                        <RouteProtection>
-                          <CreatePage />
-                        </RouteProtection>
-                      }
-                    />
-                    <Route
-                      path="/profile"
-                      element={
-                        <RouteProtection>
-                          <ProfilePage />
-                        </RouteProtection>
-                      }
-                    />
-                    <Route
-                      path="/new-profile"
-                      element={
-                        <RouteProtection>
-                          <NewProfilePage />
-                        </RouteProtection>
-                      }
-                    />
-                    <Route path="/sign-in" element={<SigninPage />} />
-                    <Route path="/sign-up" element={<SignUpPage />} />
-                    <Route
-                      path="/post/:postId/comments"
-                      element={<CommentPage />}
-                    />
-                    <Route
-                      path="/post/:postId/comments/reply/:commentId"
-                      element={<ReplyPage />}
-                    />
-                  </Routes>
-                </main>
-              </Suspense>
-              <footer className="fixed bottom-0 w-screen md:w-3/4 lg:w-1/4">
-                <BottomBarComponent />
-              </footer>
-            </BrowserRouter>
-          </div>
-        </DeviceDetailsProvider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider>
+      <DeviceDetailsProvider>
+        <div className="h-screen w-screen md:w-3/4 lg:w-1/4 mx-auto bg-background md:shadow-xl/40 shadow-foreground">
+          <Toaster position="top-center" richColors />
+          <BrowserRouter>
+            <Suspense fallback={<LoadingOverlay message="loading..." />}>
+              <main className="h-16/17">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route
+                    path="/create"
+                    element={
+                      <RouteProtection>
+                        <CreatePage />
+                      </RouteProtection>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <RouteProtection>
+                        <ProfilePage />
+                      </RouteProtection>
+                    }
+                  />
+                  <Route
+                    path="/new-profile"
+                    element={
+                      <RouteProtection>
+                        <NewProfilePage />
+                      </RouteProtection>
+                    }
+                  />
+                  <Route path="/sign-in" element={<SigninPage />} />
+                  <Route path="/sign-up" element={<SignUpPage />} />
+                  <Route
+                    path="/post/:postId/comments"
+                    element={<CommentPage />}
+                  />
+                  <Route
+                    path="/post/:postId/comments/reply/:commentId"
+                    element={<ReplyPage />}
+                  />
+                </Routes>
+              </main>
+            </Suspense>
+            <footer className="fixed bottom-0 w-screen md:w-3/4 lg:w-1/4">
+              <BottomBarComponent />
+            </footer>
+          </BrowserRouter>
+        </div>
+      </DeviceDetailsProvider>
+    </ThemeProvider>
   );
 }
 
