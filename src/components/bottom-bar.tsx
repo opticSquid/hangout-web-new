@@ -22,7 +22,7 @@ import ErrorComponent from "./error";
 function BottomBarComponent(): ReactElement {
   const navigation = useLocation();
   const navigate = useNavigate();
-  const { accessToken } = useAccessTokenContextObject();
+  const { accessToken, trustedDevice } = useAccessTokenContextObject();
   const [profileData, setProfileData] = useState<Profile>();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
   const [apiError, setApiError] = useState<ProblemDetail>();
@@ -32,21 +32,23 @@ function BottomBarComponent(): ReactElement {
   useEffect(() => {
     if (accessToken !== null) {
       const func = async () => {
-        try {
-          if (await DoesProfileExist()) {
-            const response = await FetchOwnProfileData();
-            setProfileData(response);
-          } else {
-            navigate("/new-profile", { replace: true });
+        if (trustedDevice === true) {
+          try {
+            if (await DoesProfileExist()) {
+              const response = await FetchOwnProfileData();
+              setProfileData(response);
+            } else {
+              navigate("/new-profile", { replace: true });
+            }
+          } catch (error: any) {
+            const err = error as ProblemDetail;
+            setApiError(err);
           }
-        } catch (error: any) {
-          const err = error as ProblemDetail;
-          setApiError(err);
         }
       };
       func();
     }
-  }, [accessToken]);
+  }, [accessToken, trustedDevice]);
 
   /**
    * Fetches the user's profile picture URL when the profile data is available.
