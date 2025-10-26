@@ -15,7 +15,7 @@ export async function FetchSignedCookies(
       withCredentials: true,
     };
     const response = await axiosInstance.get(
-      `/hangout-content-delivery-api/v1/get-content/${videoFileName}`,
+      `/content-delivery-api/v1/get-content/${videoFileName}`,
       rqConfig
     );
     return response.data as SingedCookie;
