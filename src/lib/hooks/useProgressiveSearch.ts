@@ -93,11 +93,7 @@ export const useProgressiveSearch = () => {
         setConsecutiveEmptyExpansions(0);
 
         // Update posts
-        if (currentPage === 1) {
-          setPosts(data.posts);
-        } else {
-          setPosts((prev) => [...prev, ...data.posts]);
-        }
+        setPosts((prev) => [...prev, ...data.posts]);
 
         // Update pagination info
         setTotalPages(data.totalPages);
