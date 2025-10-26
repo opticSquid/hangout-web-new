@@ -1,4 +1,4 @@
-import { AxiosHeaders, isAxiosError } from "axios";
+import { AxiosError, AxiosHeaders, isAxiosError } from "axios";
 import type { CustomAxiosRequestConfig } from "../types/custom-axios-request";
 import type { ProblemDetail } from "../types/model/problem-detail";
 import type {
@@ -27,8 +27,10 @@ export async function FetchPosts(
     return response.data as PostList;
   } catch (error) {
     if (isAxiosError(error)) {
-      if (error.response && error.response.data) {
-        throw error.response.data as ProblemDetail;
+      const axiosError = error as AxiosError<ProblemDetail>;
+      if (axiosError.response?.data) {
+        // API returned a Problem Detail
+        throw axiosError.response.data;
       }
     }
     throw error;

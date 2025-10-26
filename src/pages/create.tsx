@@ -53,7 +53,6 @@ function CreatePage(): ReactElement {
         setIsLoading(true);
         AddPost(formData)
           .then(() => {
-            console.log("2nd step");
             toast.success("Post created successfully!", {
               description: FormatDate(new Date()),
               duration: 3500,
@@ -61,7 +60,6 @@ function CreatePage(): ReactElement {
             });
           })
           .then(() => {
-            console.log("3rd step");
             navigate("/");
           });
       } catch (error: any) {

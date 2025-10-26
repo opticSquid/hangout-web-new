@@ -63,13 +63,11 @@ function MediaChooserComponent(props: ShootMediaProps): ReactElement {
           } else {
             const blob = new Blob([file], { type: file.type });
             props.onMediaCaptured(blob);
-            console.log("video file uploaded");
           }
         };
       } else {
         const blob = new Blob([file], { type: file.type });
         props.onMediaCaptured(blob);
-        console.log("image file uploaded");
       }
     }
   };
@@ -88,7 +86,6 @@ function MediaChooserComponent(props: ShootMediaProps): ReactElement {
     timerIntervalRef.current = setInterval(() => {
       seconds++;
       if (seconds === 60) {
-        console.log("1 min done");
         minutes++;
         seconds = 0;
         stopRecording();

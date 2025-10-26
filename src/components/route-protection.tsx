@@ -13,10 +13,8 @@ function RouteProtection(props: RouteProtectionProps): ReactElement | null {
   useEffect(() => {
     const checkAuth = async () => {
       if (accessTokenHandler.getAccessToken() === null) {
-        console.log("useAuthGuard: No access token found, trying to renew...");
         try {
           const response = await RenewAccessToken();
-          console.log("useAuthGuard: Access token renewed successfully.");
           accessTokenHandler.setAccessToken(response);
           setIsAuthenticated(true);
         } catch (error: any) {

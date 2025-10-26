@@ -22,7 +22,6 @@ function SetLocationOnMapComponent(props: AddLocationProps) {
     if (navigator.geolocation && locateMe) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log(`detecting location. time: ${new Date().toISOString()}`);
           setPosition({
             lat: position.coords.latitude,
             lng: position.coords.longitude,

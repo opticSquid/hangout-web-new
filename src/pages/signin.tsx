@@ -22,7 +22,6 @@ function SigninPage(): ReactElement {
   };
 
   const onAlertClose = () => {
-    console.log("Trust alert closed");
     setOpenNotTrustedAlert(false);
   };
 
