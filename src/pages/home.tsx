@@ -1,5 +1,6 @@
 import ErrorComponent from "@/components/error";
 import LoadingOverlay from "@/components/loading-overlay";
+import NoPostsNearby from "@/components/no-posts-nearby";
 import PostComponent from "@/components/post";
 import { LoadNPosts, SavePostsToDB } from "@/lib/db/all-posts-db";
 import { FetchPosts } from "@/lib/services/post-service";
@@ -183,7 +184,7 @@ function HomePage(): ReactElement {
             />
           ))
         ) : (
-          <div>no posts</div>
+          <NoPostsNearby />
         )}
       </section>
       {isLoading && <LoadingOverlay message="Loading posts..." />}
