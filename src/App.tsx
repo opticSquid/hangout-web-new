@@ -32,7 +32,7 @@ function App() {
   return (
     <>
       {/* Simulates mobile address bar space */}
-      <div className="h-24"></div>
+      {/* <div className="h-24"></div> */}
       <ThemeProvider>
         <DeviceDetailsProvider>
           <div className="h-[98vh] md:h-screen w-screen md:w-3/4 lg:w-1/4 mx-auto bg-background md:shadow-xl/40 shadow-foreground">
