@@ -68,7 +68,7 @@ function AddCommentComponent(props: AddCommentProps): ReactElement {
           commentId: response.commentId,
           createdAt: new Date().toUTCString(),
           text: comment,
-          userId: 2,
+          userId: profileData?.userId ?? 0,
           replyCount: 0,
         });
       } else {
@@ -81,7 +81,7 @@ function AddCommentComponent(props: AddCommentProps): ReactElement {
           commentId: response.commentId,
           createdAt: new Date().toUTCString(),
           text: comment,
-          userId: 2,
+          userId: profileData?.userId ?? 0,
           replyCount: 0,
         });
       }
