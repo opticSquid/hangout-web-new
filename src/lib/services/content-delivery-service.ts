@@ -43,7 +43,7 @@ export async function FetchProfilePictureUrl(
       withCredentials: true,
     };
     const response = await axiosInstance.get(
-      `/hangout-content-delivery-api/v1/get-profile-photo/${filename}`,
+      `/content-delivery-api/v1/get-profile-photo/${filename}`,
       rqConfig
     );
     return response.data as PreSignedUrlResponse;
