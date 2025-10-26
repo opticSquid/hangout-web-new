@@ -22,18 +22,10 @@ export const AccessTokenProvider = ({ children }: { children: ReactNode }) => {
   const isTrustedDevice = () => _trustedDevice;
 
   useEffect(() => {
-    console.log("internal access token is being changed");
-    console.log(
-      `{previous value: ${_accessToken}, current value: ${accessToken}}`
-    );
     _accessToken = accessToken; // Keep in sync
   }, [accessToken]);
 
   useEffect(() => {
-    console.log("internal trusted device is being changed");
-    console.log(
-      `{previous value: ${_trustedDevice}, current value: ${trustedDevice}}`
-    );
     _trustedDevice = trustedDevice; // Keep in sync
   }, [trustedDevice]);
 
