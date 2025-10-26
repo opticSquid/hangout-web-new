@@ -6,6 +6,7 @@ import "shaka-player/dist/controls.css";
 import shaka from "shaka-player/dist/shaka-player.ui.js";
 import PostInteractionsComponent from "./post-interactions";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import "./stylesheets/video-player.css";
 
 function VideoPlayer(props: VideoPlayerProps): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -13,6 +14,23 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
   const [videoNotAvailable, setVideoNotAvailable] = useState<boolean>(false);
   const [shouldLoad, setShouldLoad] = useState(false);
   const playerRef = useRef<shaka.Player | null>(null);
+
+  useEffect(() => {
+    // Update viewport height on resize and orientation change
+    const updateHeight = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    window.addEventListener("orientationchange", updateHeight);
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("orientationchange", updateHeight);
+    };
+  }, []);
 
   // wait for the video to be visible to load the video
   useEffect(() => {
@@ -119,16 +137,20 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
       </CardContent>
     </Card>
   ) : (
-    <div data-shaka-player-container ref={containerRef} className="h-98/99">
+    <div
+      data-shaka-player-container
+      ref={containerRef}
+      className="video-container"
+    >
       {shouldLoad && (
-        <>
+        <div className="video-wrapper">
           <video
             data-shaka-player
             id="video"
             ref={videoRef}
             autoPlay={props.videoProps.autoPlay}
             loop
-            className="aspect-9/16 object-cover w-full"
+            className="shaka-video"
           />
           <PostInteractionsComponent
             postId={props.interactionProps.postId}
@@ -139,7 +161,7 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
             location={props.interactionProps.postInteractions.location}
             showDistance={props.interactionProps.showDistance}
           />
-        </>
+        </div>
       )}
     </div>
   );

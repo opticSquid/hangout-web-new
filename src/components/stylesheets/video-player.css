@@ -1,0 +1,27 @@
+.video-container {
+  height: calc(var(--vh, 1vh) * 100);
+  max-height: -webkit-fill-available;
+  position: relative;
+  overflow: hidden;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure the video controls stay visible */
+.shaka-video-container .shaka-controls-container {
+  position: absolute !important;
+  bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+/* Adjust video element to fit within container */
+.shaka-video {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
