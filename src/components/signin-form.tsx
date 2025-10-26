@@ -50,8 +50,8 @@ function SigninFormComponent(props: SigninFormProps): ReactElement {
     if (data.password.length < 7) {
       newErrors.password =
         "Password must be more than or equal to 7 characters";
-    } else if (data.password.length >= 16) {
-      newErrors.password = "Password must be less than 16 characters";
+    } else if (data.password.length >= 24) {
+      newErrors.password = "Password must be less than 24 characters";
     }
     return newErrors;
   };

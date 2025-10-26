@@ -1,6 +1,7 @@
 import AddCommentComponent from "@/components/add-comment";
 import CommentComponent from "@/components/comment";
 import ErrorComponent from "@/components/error";
+import NoPostsNearby from "@/components/no-posts-nearby";
 import PostComponent from "@/components/post";
 import {
   FetchAllReplies,
@@ -106,7 +107,7 @@ function ReplyPage(): ReactElement {
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </>
   ) : (
-    <div>no post</div>
+    <NoPostsNearby />
   );
 }
 export default ReplyPage;
