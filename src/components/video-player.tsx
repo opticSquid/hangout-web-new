@@ -64,6 +64,7 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
       );
       player.attach(videoRef.current);
       ui.configure({
+        addSeekBar: false,
         controlPanelElements: ["fullscreen"],
       });
       const onError = (error: ShakaError) => {
@@ -118,7 +119,7 @@ function VideoPlayer(props: VideoPlayerProps): ReactElement {
       </CardContent>
     </Card>
   ) : (
-    <div data-shaka-player-container ref={containerRef} className="h-full">
+    <div data-shaka-player-container ref={containerRef} className="h-98/99">
       {shouldLoad && (
         <>
           <video
