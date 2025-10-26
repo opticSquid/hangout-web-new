@@ -3,188 +3,264 @@ import LoadingOverlay from "@/components/loading-overlay";
 import PostComponent from "@/components/post";
 import ProfileHeaderComponent from "@/components/profile-header";
 import { Button } from "@/components/ui/button";
-import { LoadNPosts, SavePostsToDB } from "@/lib/db/my-posts-db";
 import { FetchProfilePictureUrl } from "@/lib/services/content-delivery-service";
 import { FetchOwnPostsData } from "@/lib/services/post-service";
 import { FetchOwnProfileData } from "@/lib/services/profile-service";
 import type { ProblemDetail } from "@/lib/types/model/problem-detail";
-import type { PagePointer, ProfilePost } from "@/lib/types/post";
+import type { ProfilePost } from "@/lib/types/post";
 import type { Profile } from "@/lib/types/profile";
 import { Grid3X3Icon, Loader2Icon } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import {
+  useEffect,
+  useMemo,
+  useCallback,
+  useState,
+  type ReactElement,
+} from "react";
+import { useNavigate } from "react-router"; // or your routing library
 
 function ProfilePage(): ReactElement {
-  const [loadData, setLoadData] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<Profile>();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
-  const pageNumber = useRef<number>(1);
   const [posts, setPosts] = useState<ProfilePost[]>([]);
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
   const [apiError, setApiError] = useState<ProblemDetail>();
-  const limit: number = 3;
-  const offset = useRef<number>(0);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [loadData, setLoadData] = useState<boolean>(false);
 
   /**
-   * Fetches the user's profile data when the component mounts.
+   * Fetches the user's profile data and initial posts in parallel when the component mounts.
    */
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileAndPosts = async () => {
+      setIsLoading(true);
+
       try {
-        setIsLoading(true);
-        const response = await FetchOwnProfileData();
-        setProfileData(response);
-      } catch (error: any) {
-        const prblm = error as ProblemDetail;
-        setApiError(prblm);
+        // Fetch profile and posts in parallel
+        const [profileResponse, postsResponse] = await Promise.all([
+          FetchOwnProfileData(),
+          FetchOwnPostsData(1),
+        ]);
+
+        // Set profile data
+        setProfileData(profileResponse);
+
+        // Set posts data
+        setPosts(postsResponse.posts);
+        setTotalPages(postsResponse.totalPages);
+        if (postsResponse.currentPage < postsResponse.totalPages) {
+          setCurrentPage(2); // Next page to fetch
+        }
+      } catch (error) {
+        const problemDetail = error as ProblemDetail;
+
+        // Check if it's a 404 - no profile exists
+        if (problemDetail.status === 404) {
+          navigate("/new-profile", { replace: true });
+        } else {
+          setApiError(problemDetail);
+        }
       } finally {
         setIsLoading(false);
       }
     };
-    fetchProfile();
-  }, []);
+
+    fetchProfileAndPosts();
+  }, [navigate]);
 
   /**
    * Fetches the user's profile picture URL when the profile data is available.
    */
   useEffect(() => {
-    if (profileData?.profilePicture) {
-      const fetchProfilePicture = async () => {
-        try {
-          const response = await FetchProfilePictureUrl(
-            profileData.profilePicture.filename
-          );
-          setProfilePictureUrl(response.url);
-        } catch (error) {
-          const prblm = error as ProblemDetail;
-          setApiError(prblm);
-        }
-      };
-      fetchProfilePicture();
-    }
-  }, [profileData?.profilePicture]);
+    if (!profileData?.profilePicture) return;
 
-  const changePageNumber = (pagePointer: PagePointer) => {
-    if (pagePointer.currentPage < pagePointer.totalPages) {
-      pageNumber.current++;
-    }
-  };
-
-  /**
-   * Fetches the user's posts data when the component mounts and when the page number changes.
-   * It also saves the posts to the database and loads them from the database.
-   */
-  useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchProfilePicture = async () => {
       try {
-        const response = await FetchOwnPostsData(pageNumber.current);
-        await SavePostsToDB(response.posts);
-        changePageNumber({
-          currentPage: response.currentPage,
-          totalPages: response.totalPages,
-        });
-        const nextPosts = await LoadNPosts(offset.current, limit);
-        setPosts((prevState) => [...prevState, ...nextPosts]);
-        offset.current = offset.current + nextPosts.length;
-      } catch (error: any) {
-        const err = error as ProblemDetail;
-        setApiError(err);
+        const response = await FetchProfilePictureUrl(
+          profileData.profilePicture.filename
+        );
+        setProfilePictureUrl(response.url);
+      } catch (error) {
+        setApiError(error as ProblemDetail);
       }
     };
-    if (loadData === true) {
-      setIsLoading(true);
-      fetchPosts().finally(() => {
-        setIsLoading(false);
-        setLoadData(false);
-      });
-    }
-  }, [loadData]);
+    fetchProfilePicture();
+  }, [profileData?.profilePicture]);
 
   /**
-   * Calculates the 5th last element of the list. When that elment becomes visible it triggers additional data load
+   * Fetches posts from API and stores them in state (for pagination)
+   */
+  const fetchPosts = useCallback(async () => {
+    if (currentPage > totalPages && totalPages !== 0) return;
+
+    try {
+      setIsLoading(true);
+
+      // Fetch from API
+      const response = await FetchOwnPostsData(currentPage);
+
+      // Add new posts to state
+      setPosts((prev) => [...prev, ...response.posts]);
+
+      // Update pagination state
+      setTotalPages(response.totalPages);
+
+      // Move to next page if available
+      if (response.currentPage < response.totalPages) {
+        setCurrentPage((prev) => prev + 1);
+      }
+    } catch (error) {
+      setApiError(error as ProblemDetail);
+    } finally {
+      setIsLoading(false);
+      setLoadData(false);
+    }
+  }, [currentPage, totalPages]);
+
+  /**
+   * Load more posts when triggered by scroll (skips first page since it's loaded initially)
+   */
+  useEffect(() => {
+    if (loadData && !isLoading && currentPage > 1) {
+      fetchPosts();
+    }
+  }, [loadData, isLoading, currentPage, fetchPosts]);
+
+  /**
+   * Calculate trigger element for infinite scroll
    */
   const postToTriggerDataLoad = useMemo(() => {
-    if (posts.length > 0 && posts.length > 5) {
-      return posts.length - 5;
-    } else if (posts.length > 0 && posts.length <= 5) {
-      return 0;
-    } else {
-      return undefined;
+    const successPosts = posts.filter(
+      (post) => post.processStatus === "SUCCESS"
+    );
+    if (successPosts.length > 5) {
+      return successPosts.length - 5;
+    } else if (successPosts.length > 0 && successPosts.length <= 5) {
+      return successPosts.length - 1;
     }
+    return undefined;
   }, [posts]);
 
   /**
-   * Watches the 5th last element of the list. when that is visible, starts to load additional posts in background
+   * Intersection observer for infinite scroll
    */
   useEffect(() => {
-    const postElements = document.querySelectorAll(".post-container");
-    if (postToTriggerDataLoad !== undefined && postElements.length > 0) {
-      const triggerElement = postElements[postToTriggerDataLoad];
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setLoadData(true);
-          }
-        },
-        { threshold: 0.5 }
-      );
+    if (postToTriggerDataLoad === undefined || currentPage > totalPages) return;
 
-      if (triggerElement) observer.observe(triggerElement);
-      return () => observer.unobserve(triggerElement);
-    }
-  }, [postToTriggerDataLoad]);
-
-  /**
-   * autoplays the currently visible video and pauses others
-   */
-  useEffect(() => {
     const postElements = document.querySelectorAll(".post-container");
+    if (postElements.length === 0) return;
+
+    const triggerElement = postElements[postToTriggerDataLoad];
+    if (!triggerElement) return;
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisiblePostId(entry.target.getAttribute("post-id"));
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting && !isLoading) {
+          setLoadData(true);
+        }
       },
-      { threshold: 0.5 }
+      {
+        threshold: 0.5,
+        rootMargin: "100px",
+      }
     );
 
-    postElements.forEach((el) => observer.observe(el));
-    return () => postElements.forEach((el) => observer.unobserve(el));
-  }, [postToTriggerDataLoad]);
+    observer.observe(triggerElement);
+    return () => {
+      observer.unobserve(triggerElement);
+      observer.disconnect();
+    };
+  }, [postToTriggerDataLoad, isLoading, currentPage, totalPages]);
 
-  return profileData !== undefined ? (
+  /**
+   * Autoplay visible video
+   */
+  const handleIntersection = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const postId = entry.target.getAttribute("post-id");
+          setVisiblePostId(postId);
+        }
+      });
+    },
+    []
+  );
+
+  useEffect(() => {
+    const postElements = document.querySelectorAll(".post-container");
+    if (postElements.length === 0) return;
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      threshold: 0.5,
+    });
+
+    postElements.forEach((el) => observer.observe(el));
+    return () => {
+      postElements.forEach((el) => observer.unobserve(el));
+      observer.disconnect();
+    };
+  }, [posts.length, handleIntersection]);
+
+  // Filtered posts
+  const successPosts = useMemo(
+    () => posts.filter((post) => post.processStatus === "SUCCESS"),
+    [posts]
+  );
+
+  const processingCount = useMemo(
+    () => posts.filter((post) => post.processStatus !== "SUCCESS").length,
+    [posts]
+  );
+
+  // Loading state - no profile yet
+  if (!profileData && isLoading) {
+    return <LoadingOverlay message="Loading profile..." />;
+  }
+
+  // This shouldn't render because we redirect in useEffect, but keep as fallback
+  if (!profileData && !isLoading) {
+    return <div />;
+  }
+
+  return (
     <div className="flex flex-col h-full">
       <ProfileHeaderComponent
         profilePictureBaseUrl={profilePictureUrl}
-        name={profileData.name}
+        name={profileData!.name}
       />
+
       <div className="flex flex-row border-t border-b justify-center">
         <Button variant="ghost" size="icon">
           <Grid3X3Icon />
           &nbsp;POSTS
         </Button>
       </div>
-      {posts.filter((post) => post.processStatus === "IN_QUEUE").length > 0 && (
+
+      {/* Processing indicator */}
+      {processingCount > 0 && (
         <div className="flex flex-row items-center space-x-1 p-1 bg-secondary">
-          <span>
-            <Loader2Icon
-              className="h-5 w-5 animate-spin text-primary"
-              strokeWidth={5}
-            />
-          </span>
+          <Loader2Icon
+            className="h-5 w-5 animate-spin text-primary"
+            strokeWidth={5}
+          />
           <span className="text font-light">
-            {posts.filter((post) => post.processStatus !== "SUCCESS").length}
-            &nbsp;posts are being processed...
+            {processingCount} post{processingCount > 1 ? "s are" : " is"} being
+            processed...
           </span>
         </div>
       )}
 
+      {/* Posts section */}
       <section className="overflow-y-auto scrollbar-hide scroll-smooth snap-y snap-mandatory">
-        {posts
-          .filter((post) => post.processStatus === "SUCCESS")
-          .map((post) => (
+        {successPosts.length > 0 ? (
+          successPosts.map((post) => (
             <PostComponent
               key={post.postId}
               post={{
@@ -197,21 +273,30 @@ function ProfilePage(): ReactElement {
                 hearts: post.hearts,
                 interactions: post.interactions,
                 location: post.location,
-                ownerId: profileData.userId,
+                ownerId: profileData!.userId,
                 state: post.state,
               }}
               canPlayVideo={post.postId === visiblePostId}
               showDistance={false}
               twHeightClassName="h-full"
             />
-          ))}
+          ))
+        ) : !isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-muted-foreground">No posts yet</p>
+          </div>
+        ) : null}
       </section>
-      {isLoading && <LoadingOverlay message="Loading Profile..." />}
+
+      {/* Loading overlay */}
+      {isLoading && posts.length > 0 && (
+        <LoadingOverlay message="Loading more posts..." />
+      )}
+
+      {/* Error handling */}
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
     </div>
-  ) : (
-    // TODO: form to crete profile incase it does not exist
-    <div></div>
   );
 }
+
 export default ProfilePage;
