@@ -1,7 +1,9 @@
 import ErrorComponent from "@/components/error";
 import LoadingOverlay from "@/components/loading-overlay";
+import ManualLocationDialog from "@/components/manual-location-dialog";
 import NoPostsNearby from "@/components/no-posts-nearby";
 import PostComponent from "@/components/post";
+import SetLocationOnMapComponent from "@/components/set-manual-location";
 import { useProgressiveSearch } from "@/lib/hooks/useProgressiveSearch";
 import { useCallback, useEffect, useState, type ReactElement } from "react";
 import type { Post } from "../lib/types/post";
@@ -14,9 +16,14 @@ function HomePage(): ReactElement {
     apiError,
     setApiError,
     hasReachedLimit,
+    locationError,
+    showManualLocationDialog,
+    setShowManualLocationDialog,
+    handleManualLocation,
   } = useProgressiveSearch();
 
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
+  const [showSetManualLocation, setShowSetManualLocation] = useState(false);
 
   /**
    * Autoplays the currently visible video and pauses others
@@ -57,7 +64,7 @@ function HomePage(): ReactElement {
   }, [posts.length, handleIntersection]); // Depend on posts.length, not postToTriggerDataLoad
 
   // Loading state - user location
-  if (!userLocation) {
+  if (userLocation === null && locationError === null) {
     return <LoadingOverlay message="Locating you..." />;
   }
 
@@ -65,7 +72,14 @@ function HomePage(): ReactElement {
   const shouldShowNoPostsMessage =
     posts.length === 0 && !isLoading && (hasReachedLimit || !userLocation);
 
-  return (
+  return showSetManualLocation ? (
+    <SetLocationOnMapComponent
+      onSubmit={async (lat, lon) => {
+        handleManualLocation(lat, lon);
+        setShowSetManualLocation(false);
+      }}
+    />
+  ) : (
     <>
       <section className="h-full overflow-y-auto scrollbar-hide scroll-smooth snap-y snap-mandatory">
         {posts.length > 0 ? (
@@ -95,6 +109,17 @@ function HomePage(): ReactElement {
 
       {/* Error handling */}
       {apiError && <ErrorComponent error={apiError} setError={setApiError} />}
+
+      {/* Manual location dialog for location errors */}
+      <ManualLocationDialog
+        errorMessage={locationError}
+        open={showManualLocationDialog}
+        onClose={() => setShowManualLocationDialog(false)}
+        onSetManualLocation={() => {
+          setShowManualLocationDialog(false);
+          setShowSetManualLocation(true);
+        }}
+      />
     </>
   );
 }
