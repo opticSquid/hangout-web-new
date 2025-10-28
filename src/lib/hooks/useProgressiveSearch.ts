@@ -23,6 +23,10 @@ export const useProgressiveSearch = () => {
   const [hasReachedLimit, setHasReachedLimit] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [apiError, setApiError] = useState<ProblemDetail>();
+  // New state for location error and manual location dialog
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [showManualLocationDialog, setShowManualLocationDialog] =
+    useState(false);
 
   const isInitialLoad = useRef(true);
   const isFetching = useRef(false);
@@ -35,27 +39,47 @@ export const useProgressiveSearch = () => {
           setUserLocation(position);
         },
         (error) => {
+          let message = "";
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              alert("Cannot fetch nearby posts without location permission.");
+              message =
+                "Cannot fetch nearby posts without location permission.";
               break;
             case error.POSITION_UNAVAILABLE:
-              alert(
-                "Your location is not available at the moment. Please try again later."
-              );
+              message =
+                "Your location is not available at the moment. Please try again later.";
               break;
             case error.TIMEOUT:
-              alert("Location request timed out. Please try again.");
+              message = "Location request timed out. Please try again.";
               break;
             default:
-              alert(
-                "Something went wrong during fetching your location. Please refresh the page."
-              );
+              message =
+                "Something went wrong during fetching your location. Please refresh the page.";
               break;
           }
+          setLocationError(message);
+          setShowManualLocationDialog(true);
         }
       );
     }
+  }, []);
+
+  // Handler for manual location input
+  const handleManualLocation = useCallback((lat: number, lon: number) => {
+    setUserLocation({
+      coords: {
+        latitude: lat,
+        longitude: lon,
+        accuracy: 0,
+        altitude: null,
+        altitudeAccuracy: null,
+        heading: null,
+        speed: null,
+      },
+      timestamp: Date.now(),
+    } as GeolocationPosition);
+    setShowManualLocationDialog(false);
+    setLocationError(null);
   }, []);
 
   // API call to fetch posts
@@ -281,5 +305,10 @@ export const useProgressiveSearch = () => {
     apiError,
     setApiError,
     hasReachedLimit,
+    // Expose new state and handler for manual location dialog
+    locationError,
+    showManualLocationDialog,
+    setShowManualLocationDialog,
+    handleManualLocation,
   };
 };
